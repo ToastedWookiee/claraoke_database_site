@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Search</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+  </head>
+  <body style="padding: 1.25rem">
+    <section>
+      <h2 style="margin-top: 0" class="page-title">Search</h2>
+      <p>
+        Search the database using song titles, artists or combinations of both.
+      </p>
+
+      <form id="searchForm" class="searchbar" autocomplete="off">
+        <input id="searchQuery" type="text" name="q" placeholder="Search…" />
+        <button class="btn btn--outline" type="submit">Search</button>
+        <button
+          class="btn btn--outline"
+          type="button"
+          onclick="
+            const searchInput = document.getElementById('searchQuery');
+            const resultsBody = document.getElementById('resultsBody');
+
+            // Clear the input
+            searchInput.value = '';
+
+            // Reset search state
+            hasSearched = false;
+
+            // Reset table to default message
+            resultsBody.innerHTML = '<tr><td colspan=&quot;4&quot;>Enter a query to begin.</td></tr>';
+
+            // Clear stats
+            resultsStats.innerHTML = '';
+          "
+        >
+          Clear
+        </button>
+      </form>
+      <span id="resultsStats"></span>
+      
+      <div id="progress" class="progress">Searching…</div>
+
+      <div class="search-table-wrap">
+        <table class="search-table" aria-describedby="progress" id="resultsTable">
+          <thead>
+            <tr>
+              <th data-type="string" data-sortable="true">Song / Artist</th>
+              <th data-type="string">Stream (Click to view info)</th>
+              <th data-type="date" style="width: 100px; text-align: center;">Date</th>
+              <th data-type="string" style="width: 65px; text-align: center;">Link</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody">
+            <tr>
+              <td colspan="4">Enter a query to begin.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <script src="../assets/js/search.js"></script>
+  </body>
+</html>

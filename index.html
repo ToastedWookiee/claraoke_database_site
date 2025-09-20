@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Claraoke Database</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="icon" type="image/x-con" href="assets/images/favicon.ico" />
+    <script defer src="assets/js/app.js"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="site-header" role="banner">
+      <button
+        class="menu-toggle"
+        aria-label="Toggle navigation"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+      <div class="brand">
+        <img src="assets/images/banner_icon.jpg" alt="" class="brand__logo" />
+        <div class="brand__text">
+          <h1 class="brand__title">Claraoke Database</h1>
+          <p class="brand__subtitle">
+            Database of karaoke songs sung by Kaminari Clara
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="sidebar" role="navigation">
+        <nav class="nav">
+          <a
+            class="nav__link is-active"
+            href="pages/home.html"
+            target="mainframe"
+            >Home</a
+          >
+          <a class="nav__link" href="pages/search.html" target="mainframe"
+            >Search</a
+          >
+          <a class="nav__link" href="pages/videos.html" target="mainframe"
+            >Video List</a
+          >
+          <a class="nav__link" href="pages/about.html" target="mainframe"
+            >About</a
+          >
+          <!-- Add more links here; all load in iframe -->
+        </nav>
+        <div class="sidebar__footer">
+          <div id="update-display">
+            <small>Latest Database Update:</small>
+            <br />
+            <small>(UTC)&nbsp;&nbsp;: <span id="utc-time">Loading…</span></small>
+            <br />
+            <small>(Local): <span id="local-time">Loading…</span></small>
+          </div>
+
+          <script>
+            async function fetchUpdateTime() {
+              try {
+                const res = await fetch("php/db_time.php");
+                const data = await res.json();
+
+                // Parse the UTC time string
+                const utcString = data.last_update + " UTC";
+                const date = new Date(utcString);
+
+                // Display UTC
+                document.getElementById("utc-time").textContent = date
+                  .toISOString()
+                  .replace("T", " ")
+                  .replace(/\..+/, "");
+
+                // Display Local (YYYY-MM-DD HH:mm:ss in user's local timezone)
+                const localYear = date.getFullYear();
+                const localMonth = String(date.getMonth() + 1).padStart(2, "0");
+                const localDay = String(date.getDate()).padStart(2, "0");
+                let localHours = date.getHours();
+                const localMinutes = String(date.getMinutes()).padStart(2, "0");
+                const localSeconds = String(date.getSeconds()).padStart(2, "0");
+
+                // AM/PM conversion
+                const ampm = localHours >= 12 ? "PM" : "AM";
+                localHours = localHours % 12;
+                if (localHours === 0) localHours = 12; // midnight or noon
+                localHours = String(localHours).padStart(2, "0");
+
+                document.getElementById(
+                  "local-time"
+                ).textContent = `${localYear}-${localMonth}-${localDay} ${localHours}:${localMinutes}:${localSeconds}${ampm}`;
+              } catch (err) {
+                console.error("Error fetching update time:", err);
+              }
+            }
+
+            fetchUpdateTime();
+          </script>
+
+          <small>Site v1.0</small>
+        </div>
+      </aside>
+
+      <!-- Main content (iframe) -->
+      <main class="main">
+        <div class="iframe-wrap">
+          <div class="iframe-loading" id="iframeLoading" aria-hidden="true">
+            Loading…
+          </div>
+          <iframe
+            name="mainframe"
+            id="mainframe"
+            title="Content"
+            src="pages/home.html"
+            loading="lazy"
+            onload="hideIframeLoader()"
+          ></iframe>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="footer__inner">
+        <p>
+          &copy; <span id="year"></span> Claraoke Database. All rights
+          reserved.<br />
+          <br />
+          This website is a fan-created, non-commercial resource for
+          informational purposes only.<br />
+          All songs, lyrics, and musical works listed here are the property of
+          their respective copyright holders.<br />
+          Streamer performances, likeness, and related content are © Phase
+          Connect LTD.<br />
+          <br />
+          No audio or video files are hosted or distributed by this site.<br />
+          If you are a rights holder and wish to request removal of any content,
+          please contact us at: contact@acormiz.com
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

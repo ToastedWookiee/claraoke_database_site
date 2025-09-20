@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Home</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <script>
+      window.onload = function () {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("stats").innerHTML = this.responseText;
+          }
+        };
+        xmlhttp.open("GET", "../php/stats.php", true);
+        xmlhttp.send();
+      };
+    </script>
+  </head>
+  <body class="content-wrap" style="padding: 1.25rem">
+    <section>
+      <h2 style="margin-top: 0" class="page-title">
+        Welcome to the Claraoke Database
+      </h2>
+      <p>
+        This site allows you to search a database of almost every karaoke song
+        that Clara has sung with links to listen to from archived streams. The
+        menu to the left has options to search as well as view a full listing of
+        databased streams and their song list.
+      </p>
+      <p style="font-style: italic;">Disclaimer: This database is no where near perfect, there have been many different contributors, who each
+        have their own style of formatting their timestamp lists. Work will be taken in the future to consolidate and cleanup the data.
+      </p>
+      <p>To start here are some statistics from the database:</p>
+    </section>
+    <span id="stats"></span>
+  </body>
+</html>
