@@ -19,9 +19,6 @@ function clean_artist_name($artist)
     // Cut off at dash, slash, or comma
     $artist = preg_replace('/\s*[-\/,].*/', '', $artist);
 
-    // Remove "feat.", "featuring", "ft." (case-insensitive)
-    $artist = preg_replace('/\s+(feat\.?|featuring|ft\.)\s+.*/i', '', $artist);
-
     // Normalize spaces
     $artist = trim($artist);
     $artist = preg_replace('/\s+/', ' ', $artist); // collapse multiple spaces
@@ -83,8 +80,8 @@ foreach ($videoIDs as $videoID) {
             $artist = clean_artist_name($artist);
 
             // If artist contains: "and", "&", or "with" then split and count each separately
-            if (preg_match('/\s+(and|&|with)\s+/', $artist)) {
-                $sub_artists = preg_split('/\s+(and|&|with)\s+/', clean_artist_name($row['ARTIST']));
+            if (preg_match('/\s+(and|&|with|feat\.|featuring|ft\.)\s+/', $artist)) {
+                $sub_artists = preg_split('/\s+(and|&|with|feat\.|featuring|ft\.)\s+/', clean_artist_name($row['ARTIST']));
                 foreach ($sub_artists as $sub_artist) {
                     $sub_artist = $sub_artist_ori = trim($sub_artist);
                     $sub_artist = strtolower($sub_artist);
@@ -94,10 +91,9 @@ foreach ($videoIDs as $videoID) {
                     if (isset($artists[$sub_artist])) {
                         $artists[$sub_artist]['count']++;
                     } else {
-                        $sub_artist_trim = clean_artist_name($sub_artist_ori);
                         $artists[$sub_artist] = array(
                             'count' => 1,
-                            'artist' => $sub_artist_trim
+                            'artist' => $sub_artist_ori
                         );
                     }
                 }
