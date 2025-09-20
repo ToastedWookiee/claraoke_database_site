@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-// WARNING: This is a security risk. Allowing all origins is dangerous. You should restrict this to a specific domain.
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: https://clara.acormiz.com');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Get our database config and connect to the database
