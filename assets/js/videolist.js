@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     for (const item of items) {
-      const video_url = `../php/video.php?videoID=${encodeURIComponent(item.VIDEOID)}`;
+      const video_url = `../pages/video.html?videoID=${encodeURIComponent(item.VIDEOID)}`;
       const youtube_url = `https://www.youtube.com/watch?v=${encodeURIComponent(item.VIDEOID)}`;
       const thumbnail_url = `https://img.youtube.com/vi/${encodeURIComponent(item.VIDEOID)}/default.jpg`;
 

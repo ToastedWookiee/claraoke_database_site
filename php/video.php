@@ -1,52 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: https://clara.acormiz.com');
+header('Access-Control-Allow-Headers: Content-Type');
 
-<head>
-    <meta charset="utf-8" />
-    <title>Video List</title>
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <script>
-        function fitText(el) {
-            let fontSize = parseInt(window.getComputedStyle(el).fontSize);
-            const minFontSize = 10; // minimum font size in px
+// Get videoID from request
+$videoID = $_REQUEST['videoID'] ?? '';
+if ($videoID === '') {
+    echo json_encode(['error' => 'No videoID provided']);
+    exit;
+}
 
-            // Reduce font size until the text fits inside the element
-            while (el.scrollHeight > el.clientHeight && fontSize > minFontSize) {
-                fontSize--;
-                el.style.fontSize = fontSize + 'px';
-            }
-        }
+// Get our database config and connect to the database
+$config = require 'db.php';
+$dsn = "mysql:host={$config['host']};dbname={$config['db']};charset=utf8mb4";
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_EMULATE_PREPARES => false,
+];
 
-        // Apply to all h3.fit-text elements
-        document.querySelectorAll('h3.video-title').forEach(fitText);
-
-        // Re-fit on window resize
-        window.addEventListener('resize', () => {
-            document.querySelectorAll('h3.video-title').forEach(el => {
-                el.style.fontSize = ''; // reset before recalculating
-                fitText(el);
-            });
-        });
-
-    </script>
-</head>
-
-<body style="padding: 1.25rem">
-    <?php
-    // Get videoID from request
-    $videoID = $_REQUEST['videoID'] ?? '';
-    if ($videoID === '') {
-        echo "<h2>No videoID provided</h2>";
-        exit;
-    }
-
-    // Get our database config and connect to the database
-    $config = require 'db.php';
-    $dsn = "mysql:host={$config['host']};dbname={$config['db']};charset=utf8mb4";
-    $options = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_EMULATE_PREPARES => false,
-    ];
+try {
     $pdo = new PDO($dsn, $config['user'], $config['pass'], $options);
 
     // --- SQL INJECTION MITIGATION ---
@@ -62,7 +34,7 @@
 
     // Check if the requested videoID is a valid table
     if (!in_array($videoID, $allowed_tables)) {
-        echo "<h2>Invalid videoID</h2>";
+        echo json_encode(['error' => 'Invalid videoID']);
         exit;
     }
     // --- END SQL INJECTION MITIGATION ---
@@ -72,37 +44,22 @@
 
     // First information from the videos table
     $sql_query = "SELECT * FROM videos WHERE VIDEOID = :videoid LIMIT 1";
-    try {
-        $stmt = $pdo->prepare($sql_query);
-        $stmt->execute(['videoid' => $videoID]);
-        $video_info = $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "❌ Query failed: " . $e->getMessage();
-        exit;
-    }
+    $stmt = $pdo->prepare($sql_query);
+    $stmt->execute(['videoid' => $videoID]);
+    $video_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Next information from the karaokes table
     $sql_query = "SELECT * FROM karaokes WHERE VIDEOID = :videoid LIMIT 1";
-    try {
-        $stmt = $pdo->prepare($sql_query);
-        $stmt->execute(['videoid' => $videoID]);
-        $karaoke_info = $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        echo "❌ Query failed: " . $e->getMessage();
-        exit;
-    }
+    $stmt = $pdo->prepare($sql_query);
+    $stmt->execute(['videoid' => $videoID]);
+    $karaoke_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Last get the song list from its own table
     $songs = [];
     $sql_query = "SELECT * FROM `$table`";
-    try {
-        $stmt = $pdo->query($sql_query);
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $songs[] = $row;
-        }
-    } catch (PDOException $e) {
-        echo "❌ Query failed: " . $e->getMessage();
-        exit;
+    $stmt = $pdo->query($sql_query);
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $songs[] = $row;
     }
 
     // Format our date to YYYY-MM-DD
@@ -114,77 +71,23 @@
         }
     }
 
-    // --- Prepare data for display ---
-    // Sanitize all data before rendering to prevent XSS
-    $title_safe = htmlspecialchars($video_info['TITLE'] ?? 'Unknown Title', ENT_QUOTES, 'UTF-8');
-    $date_aired_safe = htmlspecialchars($date_aired, ENT_QUOTES, 'UTF-8');
-    $num_songs_safe = htmlspecialchars($karaoke_info['NUM'] ?? 0, ENT_QUOTES, 'UTF-8');
+    // Combine all data into a single array
+    $response_data = [
+        'video_info' => $video_info,
+        'karaoke_info' => $karaoke_info,
+        'songs' => $songs,
+        'date_aired' => $date_aired,
+    ];
 
-    // URL-encode data used in URLs
-    $videoID_encoded = urlencode($videoID);
-    $thumbnail_url = "https://img.youtube.com/vi/{$videoID_encoded}/hqdefault.jpg";
-    $youtube_link = "https://www.youtube.com/watch?v={$videoID_encoded}";
+    // Output the data as JSON
+    echo json_encode($response_data);
 
-    // Display Results
-    // Use HTML with inline PHP to show our results
-    ?>
+} catch (PDOException $e) {
+    // Return a JSON error message
+    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+    exit;
+}
 
-    <div class="video-item">
-        <h3 class="video-title">
-            <?php echo $title_safe; ?>
-        </h3>
-        <div class="video-body">
-            <div class="video-thumb">
-                <img src="<?php echo $thumbnail_url; ?>" alt="Video Thumbnail" height="150px"
-                    title="<?php echo $title_safe; ?>" />
-            </div>
-            <div class="video-info">
-                <p><strong>Date Aired:</strong> <?php echo $date_aired_safe; ?><br />
-                    <strong># of Songs:</strong> <?php echo $num_songs_safe; ?><br />
-                    <strong>Video Link:</strong> <a href="<?php echo $youtube_link; ?>" class="video-link"
-                        target="_blank" rel="noopener">Watch Video</a>
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="video-table-wrap">
-        <div class="song-list">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col" style="min-width: 150px;">Song Title</th>
-                        <th scope="col" width="300px">Artist</th>
-                        <th scope="col" width="140px" style="text-align: center;">Link to Watch</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // Loop through our songs and display them
-                    foreach ($songs as $song) {
-                        // Sanitize song data for display
-                        $song_title_safe = htmlspecialchars($song['TITLE'] ?? 'Unknown Title', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                        $song_artist_safe = htmlspecialchars($song['ARTIST'] ?? 'Unknown Artist', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-
-                        // Format the timestamp and create a safe YouTube link
-                        $timestamp = preg_replace("/(\d{2}):(\d{2}):(\d{2})/", "$1h$2m$3s", $song['STARTTIME']);
-                        $song_link = "https://www.youtube.com/watch?v={$videoID_encoded}&t=" . urlencode($timestamp);
-
-                        echo "<tr>";
-                        echo "<td><span class='truncate' title='{$song_title_safe}'>{$song_title_safe}</span></td>";
-                        echo "<td><span class='truncate-300' title='{$song_artist_safe}'>{$song_artist_safe}</span></td>";
-                        echo "<td style='text-align: center;'><a href='{$song_link}' class='video-link' target='_blank' rel='noopener'>Link</a></td>";
-                        echo "</tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <?php
-    // Close the connection
-    $pdo = null;
-    ?>
-</body>
-
-</html>
+// Close the connection
+$pdo = null;
+?>

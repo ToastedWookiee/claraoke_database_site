@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Video</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body style="padding: 1.25rem">
+    <div id="video-container">
+        <div class="video-item">
+            <h3 id="video-title" class="video-title"></h3>
+            <div class="video-body">
+                <div id="video-thumbnail" class="video-thumb"></div>
+                <div class="video-info">
+                    <p>
+                        <strong>Date Aired:</strong> <span id="video-date"></span><br />
+                        <strong># of Songs:</strong> <span id="video-songs-count"></span><br />
+                        <strong>Video Link:</strong> <a id="video-link" href="#" class="video-link" target="_blank" rel="noopener">Watch Video</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="video-table-wrap">
+            <div class="song-list">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="min-width: 150px;">Song Title</th>
+                            <th scope="col" width="300px">Artist</th>
+                            <th scope="col" width="140px" style="text-align: center;">Link to Watch</th>
+                        </tr>
+                    </thead>
+                    <tbody id="song-list-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/js/video.js"></script>
+</body>
+
+</html>
