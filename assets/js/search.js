@@ -28,7 +28,7 @@
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td class="col-song"><span class="truncate" title="${item.song} / ${item.artist}">${item.song} / ${item.artist}</span></td>
-        <td class="col-video"><span class="truncate" title="${item.video}"><a href="../php/video.php?videoID=${item.videoid}" target="_self">${item.video}</target></span></td>
+        <td class="col-video"><span class="truncate" title="${item.video}"><a href="../pages/video.html?videoID=${item.videoid}" target="_self">${item.video}</target></span></td>
         <td>${item.date}</td>
         <td style="text-align:center;"><a href="${item.link}" class="video-link" target="_blank" rel="noopener">Link</a></td>
       `;
