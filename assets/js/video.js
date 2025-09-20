@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
             songListBody.innerHTML = ""; // Clear existing rows
             if (data.songs && data.songs.length > 0) {
                 data.songs.forEach(song => {
-                    const timestamp = song.STARTTIME.replace(/(\\d{2}):(\\d{2}):(\\d{2})/, "$1h$2m$3s");
+
+                    const timestamp = song.STARTTIME.replace(/(\d{2}):(\d{2}):(\d{2})/, "$1h$2m$3s");
+
                     const song_link = `https://www.youtube.com/watch?v=${encodeURIComponent(videoID)}&t=${encodeURIComponent(timestamp)}`;
 
                     const row = document.createElement('tr');
