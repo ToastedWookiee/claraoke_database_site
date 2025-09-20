@@ -84,11 +84,19 @@
     const searchInput = document.getElementById("searchQuery");
 
     const params = new URLSearchParams(window.location.search);
-    const initialQuery = params.get("q");
+    const rawQuery = params.get("q");
+    if (rawQuery) {
+      // decodeURIComponent converts %27 → '
+      const query = decodeURIComponent(rawQuery);
 
-    if (initialQuery) {
-      searchInput.value = initialQuery;
-      doSearch(initialQuery); // your AJAX search function
+      // Optional: convert HTML entities to normal characters
+      const temp = document.createElement("textarea");
+      temp.innerHTML = query; // decode HTML entities like &#039;
+      const finalQuery = temp.value;
+
+      document.getElementById("searchQuery").value = finalQuery;
+
+      doSearch(finalQuery);
     }
   });
 })();
