@@ -49,6 +49,24 @@
     ];
     $pdo = new PDO($dsn, $config['user'], $config['pass'], $options);
 
+    // --- SQL INJECTION MITIGATION ---
+    // Function to get all valid video table names from the karaokes table
+    function get_all_video_tables($pdo)
+    {
+        $stmt = $pdo->query("SELECT VIDEOID FROM karaokes");
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    // Get the list of all valid video tables
+    $allowed_tables = get_all_video_tables($pdo);
+
+    // Check if the requested videoID is a valid table
+    if (!in_array($videoID, $allowed_tables)) {
+        echo "<h2>Invalid videoID</h2>";
+        exit;
+    }
+    // --- END SQL INJECTION MITIGATION ---
+
     // Get all of our relevent information for this videoID
     $table = preg_replace('/[^a-zA-Z0-9_-]/', '', $videoID);
 
@@ -96,24 +114,35 @@
         }
     }
 
+    // --- Prepare data for display ---
+    // Sanitize all data before rendering to prevent XSS
+    $title_safe = htmlspecialchars($video_info['TITLE'] ?? 'Unknown Title', ENT_QUOTES, 'UTF-8');
+    $date_aired_safe = htmlspecialchars($date_aired, ENT_QUOTES, 'UTF-8');
+    $num_songs_safe = htmlspecialchars($karaoke_info['NUM'] ?? 0, ENT_QUOTES, 'UTF-8');
+
+    // URL-encode data used in URLs
+    $videoID_encoded = urlencode($videoID);
+    $thumbnail_url = "https://img.youtube.com/vi/{$videoID_encoded}/hqdefault.jpg";
+    $youtube_link = "https://www.youtube.com/watch?v={$videoID_encoded}";
+
     // Display Results
     // Use HTML with inline PHP to show our results
     ?>
 
     <div class="video-item">
         <h3 class="video-title">
-            <?php echo htmlspecialchars($video_info['TITLE'], ENT_QUOTES, 'UTF-8') ?>
+            <?php echo $title_safe; ?>
         </h3>
         <div class="video-body">
             <div class="video-thumb">
-                <img src="https://img.youtube.com/vi/<?php echo $videoID; ?>/hqdefault.jpg" alt="Video Thumbnail"
-                    height="150px" title="<?php echo $video_info['TITLE']; ?>" />
+                <img src="<?php echo $thumbnail_url; ?>" alt="Video Thumbnail" height="150px"
+                    title="<?php echo $title_safe; ?>" />
             </div>
             <div class="video-info">
-                <p><strong>Date Aired:</strong> <?php echo $date_aired; ?><br />
-                    <strong># of Songs:</strong> <?php echo $karaoke_info['NUM']; ?><br />
-                    <strong>Video Link:</strong> <a href="https://www.youtube.com/watch?v=<?php echo $videoID; ?>"
-                        class="video-link" target="_blank" rel="noopener">Watch Video</a>
+                <p><strong>Date Aired:</strong> <?php echo $date_aired_safe; ?><br />
+                    <strong># of Songs:</strong> <?php echo $num_songs_safe; ?><br />
+                    <strong>Video Link:</strong> <a href="<?php echo $youtube_link; ?>" class="video-link"
+                        target="_blank" rel="noopener">Watch Video</a>
                 </p>
             </div>
         </div>
@@ -132,15 +161,18 @@
                     <?php
                     // Loop through our songs and display them
                     foreach ($songs as $song) {
-                        $title = htmlspecialchars($song['TITLE'] ?? 'Unknown Title', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                        $artist = htmlspecialchars($song['ARTIST'] ?? 'Unknown Artist', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                        // Format the timestamp to fit Youtube's URL format
-                        $timestamp = preg_replace("/(\d{2}):(\d{2}):(\d{2})/", "$1h$2m$3s", $song['STARTTIME']);
-                        $link = "https://www.youtube.com/watch?v={$videoID}&t={$timestamp}";
+                        // Sanitize song data for display
+                        $song_title_safe = htmlspecialchars($song['TITLE'] ?? 'Unknown Title', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                        $song_artist_safe = htmlspecialchars($song['ARTIST'] ?? 'Unknown Artist', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-                        echo "<td><span class='truncate' title='{$title}'>{$title}</span></td>";
-                        echo "<td><span class='truncate-300' title='{$artist}'>{$artist}</span></td>";
-                        echo "<td style='text-align: center;'><a href='{$link}' class='video-link' target='_blank' rel='noopener'>Link</a></td>";
+                        // Format the timestamp and create a safe YouTube link
+                        $timestamp = preg_replace("/(\d{2}):(\d{2}):(\d{2})/", "$1h$2m$3s", $song['STARTTIME']);
+                        $song_link = "https://www.youtube.com/watch?v={$videoID_encoded}&t=" . urlencode($timestamp);
+
+                        echo "<tr>";
+                        echo "<td><span class='truncate' title='{$song_title_safe}'>{$song_title_safe}</span></td>";
+                        echo "<td><span class='truncate-300' title='{$song_artist_safe}'>{$song_artist_safe}</span></td>";
+                        echo "<td style='text-align: center;'><a href='{$song_link}' class='video-link' target='_blank' rel='noopener'>Link</a></td>";
                         echo "</tr>";
                     }
                     ?>

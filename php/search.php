@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
+// WARNING: This is a security risk. Allowing all origins is dangerous. You should restrict this to a specific domain.
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
 
@@ -36,22 +37,40 @@ if ($query !== '') {
     $params[] = "%$word%";
   }
 
+  // --- SQL INJECTION MITIGATION ---
+  // Get the list of all tables in the database
+  $stmt = $pdo->query("SHOW TABLES");
+  $all_tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
   // Get list of all videoIDs from the karaokes table
-  $videoIDs = [];
-  $sql_query = "SELECT VIDEOID FROM karaokes";
-  try {
-    $stmt = $pdo->query($sql_query);                 // run the query
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {   // fetch as associative array
-      $videoIDs[] = $row['VIDEOID'];
-    }
-  } catch (PDOException $e) {
-    echo "❌ Query failed: " . $e->getMessage();
-    exit;
+  $stmt = $pdo->query("SELECT VIDEOID FROM karaokes");
+  $videoIDs_from_karaokes = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+  // The valid video tables are the intersection of the actual tables and the video IDs from the karaokes table
+  $valid_video_tables = array_intersect($videoIDs_from_karaokes, $all_tables);
+  // --- END SQL INJECTION MITIGATION ---
+
+  // --- PERFORMANCE OPTIMIZATION ---
+  // Pre-fetch all video information for the valid tables to avoid N+1 queries
+  $video_info_map = [];
+  if (!empty($valid_video_tables)) {
+      // Create placeholders for the IN clause.
+      // array_values is used to reset keys in case array_intersect resulted in non-sequential keys.
+      $placeholders = implode(',', array_fill(0, count($valid_video_tables), '?'));
+      $sql_video_info = "SELECT VIDEOID, TITLE, TIME FROM videos WHERE VIDEOID IN ($placeholders)";
+
+      $stmt_video_info = $pdo->prepare($sql_video_info);
+      $stmt_video_info->execute(array_values($valid_video_tables));
+
+      while ($video_row = $stmt_video_info->fetch(PDO::FETCH_ASSOC)) {
+          $video_info_map[$video_row['VIDEOID']] = $video_row;
+      }
   }
-  $videoIDs = array_unique($videoIDs);
+  // --- END PERFORMANCE OPTIMIZATION ---
 
   // Loop through each videoID and search its table for matching songs or artists
-  foreach ($videoIDs as $videoID) {
+  foreach ($valid_video_tables as $videoID) {
+    // Sanitize table name as a secondary defense measure. The primary defense is the whitelist validation above.
     $table = preg_replace('/[^a-zA-Z0-9_-]/', '', $videoID);
     $sql_query = "SELECT * FROM `$table` WHERE ";
     $sql_query .= implode(' AND ', $conds);
@@ -59,16 +78,9 @@ if ($query !== '') {
       $stmt = $pdo->prepare($sql_query);
       $stmt->execute($params);
       while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        // Get video Title and Date from videos table
-        $video_info = null;
-        $sql_video = "SELECT * FROM videos WHERE VIDEOID = :videoid LIMIT 1";
-        try {
-          $stmt_video = $pdo->prepare($sql_video);
-          $stmt_video->execute(['videoid' => $videoID]);
-          $video_info = $stmt_video->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-          // Ignore errors here
-        }
+        // Get video Title and Date from the pre-fetched map
+        $video_info = $video_info_map[$videoID] ?? null;
+
         $title = $video_info['TITLE'] ?? 'Unknown';
         $date = 'Unknown';
         if (isset($video_info['TIME'])) {
