@@ -1,2 +1,9 @@
 php/db.php.bak
 php/db.php
+gulpfile.js
+node_modules
+package-lock.json
+package.json
+.DS_Store
+.vscode
+dist/
