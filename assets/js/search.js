@@ -5,6 +5,65 @@
   const progress = document.getElementById("progress");
   const resultsStats = document.getElementById("resultsStats");
 
+  // Resize the table, max 1025px wide, 4 columns, col 1+2 flexible max width 860px together
+  // col3 100px, col4 65px
+  // Total min width = 250 + 150 + 100 + 65 = 565px
+  // Total max width = 560 + 300 + 100 + 65 = 1025px
+  function resizeTable() {
+    const container = document.getElementById("resultsContainer");
+    if (!container) return;
+    const table = document.getElementById("resultsTable");
+    if (!table) return;
+
+    const containerWidth = Math.min(container.offsetWidth, 1025);
+
+    const col3Width = 100;
+    const col4Width = 65;
+    const maxCol1Col2 = 860;
+    const minCol1Width = 250;
+    const maxCol1Width = 500;
+
+    // Create a canvas for measuring text width
+    const ctx = document.createElement("canvas").getContext("2d");
+    ctx.font = getComputedStyle(table).font; // use table font
+
+    // find max content width in col1
+    let maxContentWidth = 0;
+    table.querySelectorAll("tr").forEach((row) => {
+      const cell = row.children[0];
+      if (!cell) return;
+      const text = cell.innerText || cell.textContent;
+      const width = ctx.measureText(text).width + 20; // add some padding
+      if (width > maxContentWidth) maxContentWidth = width;
+    });
+
+    // clamp col1 width between min and max
+    let col1Width = Math.min(
+      Math.max(maxContentWidth, minCol1Width),
+      maxCol1Width
+    );
+
+    // remaining width for col2
+    let remaining = containerWidth - col3Width - col4Width;
+    let col2Width = remaining - col1Width;
+
+    // ensure combined col1+col2 does not exceed maxCol1Col2
+    if (col1Width + col2Width > maxCol1Col2) {
+      col2Width = maxCol1Col2 - col1Width;
+    }
+    col2Width = Math.max(col2Width, 0);
+
+    // apply widths
+    table.querySelectorAll("tr").forEach((row) => {
+      const cells = row.children;
+      if (cells.length < 4) return;
+      cells[0].style.width = col1Width + "px";
+      cells[1].style.width = col2Width + "px";
+      cells[2].style.width = col3Width + "px";
+      cells[3].style.width = col4Width + "px";
+    });
+  }
+
   function setLoading(on) {
     if (on) progress.classList.add("is-active");
     else progress.classList.remove("is-active");
@@ -29,8 +88,8 @@
       tr.innerHTML = `
         <td class="col-song"><span class="truncate" title="${item.song} / ${item.artist}">${item.song} / ${item.artist}</span></td>
         <td class="col-video"><span class="truncate" title="${item.video}"><a href="../pages/video.html?videoID=${item.videoid}" target="_self">${item.video}</target></span></td>
-        <td>${item.date}</td>
-        <td style="text-align:center;"><a href="${item.link}" class="video-link" target="_blank" rel="noopener">Link</a></td>
+        <td class="col-date">${item.date}</td>
+        <td class="col-link"><a href="${item.link}" class="video-link" target="_blank" rel="noopener">Link</a></td>
       `;
       resultsBody.appendChild(tr);
     }
@@ -64,6 +123,7 @@
       const data = await res.json();
       displayStats(data || []);
       renderRows(data.items || []);
+      resizeTable(); // Resize table after rendering new rows
     } catch (err) {
       console.error(err);
       displayStats([]);

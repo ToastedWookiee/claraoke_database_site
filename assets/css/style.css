@@ -519,10 +519,10 @@ th.sorted-desc::after {
 
 .search-table {
   width: 100%;
-  min-width: 640px;
+  min-width: 565px;
   color: var(--text-100);
   border-collapse: collapse;
-  table-layout: auto; /* important: allows first col to grow naturally */
+  table-layout: fixed; /* important: allows first col to grow naturally */
 }
 .search-table th,
 .search-table td {
@@ -546,9 +546,10 @@ th.sorted-desc::after {
   color: var(--text-100);
 }
 
-/* First column: max 600px with truncation */
+/* First column: max 500px with truncation */
 .col-song {
-  max-width: 560px;
+  min-width: 250px;
+  max-width: 500px;
 }
 
 .col-song .truncate {
@@ -558,10 +559,9 @@ th.sorted-desc::after {
   text-overflow: ellipsis;
 }
 
-/* Second column: min 150px, max 300px with truncation */
+/* Second column: min 150px with truncation */
 .col-video {
   min-width: 150px;
-  max-width: 300px;
 }
 
 .col-video .truncate {
@@ -569,4 +569,14 @@ th.sorted-desc::after {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.col-date {
+  width: 100px;
+  text-align: center;
+}
+
+.col-link {
+  width: 65px;
+  text-align: center;
 }

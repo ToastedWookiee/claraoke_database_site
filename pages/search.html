@@ -42,14 +42,14 @@
       
       <div id="progress" class="progress">Searching…</div>
 
-      <div class="search-table-wrap">
+      <div class="search-table-wrap" id="resultsContainer">
         <table class="search-table" aria-describedby="progress" id="resultsTable">
           <thead>
             <tr>
-              <th data-type="string" data-sortable="true">Song / Artist</th>
-              <th data-type="string">Stream (Click to view info)</th>
-              <th data-type="date" style="width: 100px; text-align: center;">Date</th>
-              <th data-type="string" style="width: 65px; text-align: center;">Link</th>
+              <th data-type="string" data-sortable="true" class="col-song">Song / Artist</th>
+              <th data-type="string" class="col-video">Stream (Click to view info)</th>
+              <th data-type="date" class="col-date" style="text-align: center;">Date</th>
+              <th data-type="string" class="col-link" style="text-align: center;">Link</th>
             </tr>
           </thead>
           <tbody id="resultsBody">
