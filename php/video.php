@@ -22,18 +22,19 @@ try {
     $pdo = new PDO($dsn, $config['user'], $config['pass'], $options);
 
     // --- SQL INJECTION MITIGATION ---
-    // Function to get all valid video table names from the karaokes table
-    function get_all_video_tables($pdo)
-    {
-        $stmt = $pdo->query("SELECT VIDEOID FROM karaokes");
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
-    }
+    // Get the list of all tables in the database
+    $stmt = $pdo->query("SHOW TABLES");
+    $all_tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Get the list of all valid video tables
-    $allowed_tables = get_all_video_tables($pdo);
+    // Get the list of all valid video table names from the karaokes table
+    $stmt = $pdo->query("SELECT VIDEOID FROM karaokes");
+    $videoIDs_from_karaokes = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+    // The valid video tables are the intersection of the actual tables and the video IDs from the karaokes table
+    $valid_video_tables = array_intersect($videoIDs_from_karaokes, $all_tables);
 
     // Check if the requested videoID is a valid table
-    if (!in_array($videoID, $allowed_tables)) {
+    if (!in_array($videoID, $valid_video_tables)) {
         echo json_encode(['error' => 'Invalid videoID']);
         exit;
     }
