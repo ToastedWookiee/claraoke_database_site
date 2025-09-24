@@ -67,6 +67,15 @@ try {
 // Make sure videoIDs are unique
 $videoIDs = array_unique($videoIDs);
 
+// --- SQL INJECTION MITIGATION ---
+// Get the list of all tables in the database
+$stmt = $pdo->query("SHOW TABLES");
+$all_tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Filter the videoIDs to only include those that are also real tables
+$videoIDs = array_intersect($videoIDs, $all_tables);
+// --- END SQL INJECTION MITIGATION ---
+
 // Get the top 10 artists
 // Loop through each videoID and get the artists and put in an array with their count
 $artists = [];
