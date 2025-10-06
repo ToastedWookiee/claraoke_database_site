@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Searchable database of karaoke songs sung by Kaminari Clara of PhaseConnect" />
     <title>Claraoke Database</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/style.css" type="text/css" />
     <link rel="icon" type="image/x-con" href="assets/images/favicon.ico" />
+    <link rel="preconnect" href="https://cloudflareinsights.com" />
     <script defer src="assets/js/app.js"></script>
   </head>
   <body>
@@ -23,7 +23,12 @@
         ☰
       </button>
       <div class="brand">
-        <img src="assets/images/banner_icon.jpg" alt="" class="brand__logo" />
+        <img
+          src="assets/images/banner_icon.jpg"
+          alt=""
+          class="brand__logo"
+          width="44px"
+          height="44px" />
         <div class="brand__text">
           <h1 class="brand__title">Claraoke Database</h1>
           <p class="brand__subtitle">
@@ -66,7 +71,7 @@
             <small>(Local): <span id="local-time">Loading…</span></small>
           </div>
 
-          <script>
+          <script defer>
             async function fetchUpdateTime() {
               try {
                 const res = await fetch('php/db_time.php');
@@ -106,7 +111,7 @@
             fetchUpdateTime();
           </script>
 
-          <small>Site v1.0.2</small>
+          <small>Site v1.0.3</small>
         </div>
       </aside>
 

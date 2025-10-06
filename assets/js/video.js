@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       videoTitle.textContent = data.video_info.TITLE || 'Unknown Title';
 
-      const thumbnail_url = `https://img.youtube.com/vi/${encodeURIComponent(videoID)}/hqdefault.jpg`;
-      videoThumbnail.innerHTML = `<img src="${thumbnail_url}" alt="Video Thumbnail" height="150px" title="${data.video_info.TITLE || ''}" />`;
+      const thumbnail_url = `https://img.youtube.com/vi/${encodeURIComponent(videoID)}/mqdefault.jpg`;
+      videoThumbnail.innerHTML = `<img src="${thumbnail_url}" alt="Video Thumbnail" height="150px" width="200px" title="${data.video_info.TITLE || ''}" />`;
 
       videoDate.textContent = data.date_aired || 'Unknown';
       videoSongsCount.textContent = data.karaoke_info.NUM || 0;
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
           row.innerHTML = `
                         <td><span class="truncate" title="${song.TITLE || ''}">${song.TITLE || 'Unknown Title'}</span></td>
                         <td><span class="truncate-300" title="${song.ARTIST || ''}">${song.ARTIST || 'Unknown Artist'}</span></td>
-                        <td style="text-align: center;"><a href="${song_link}" class="video-link" target="_blank" rel="noopener">Link</a></td>
+                        <td class="clickable-cell"><a href="${song_link}" class="full-link" target="_blank" rel="noopener">Link</a></td>
                     `;
           songListBody.appendChild(row);
         });

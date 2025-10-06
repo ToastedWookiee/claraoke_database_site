@@ -20,15 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><a href="${video_url}"><img style="vertical-align:middle" src="${thumbnail_url}" alt="Thumbnail" title="${item.TITLE}" height="50"></a></td>
-        <td style="padding-left: 0.75rem; text-align: left;">
-          <span class="truncate" title="${item.TITLE}">
-            <a href="${video_url}" target="_self">${item.TITLE}</a>
-          </span>
+        <td class="clickable-cell"><a href="${video_url}" class="full-link"><img class="list-thumbnail" src="${thumbnail_url}" alt="Thumbnail" title="${item.TITLE}" width="67px" height="51px" loading="lazy"></a></td>
+        <td class="clickable-cell" style="padding-left: 0.75rem; text-align: left;">
+          <a href="${video_url}" target="_self" class="full-link">
+            <span class="truncate" title="${item.TITLE}">
+              ${item.TITLE}
+            </span>
+          </a>
         </td>
         <td style="text-align: center">${item.TIME}</td>
         <td style="text-align: center">${item.NUM}</td>
-        <td style="text-align: center"><a href="${youtube_url}" class="video-link" target="_blank" rel="noopener">Link</a></td>
+        <td class="clickable-cell"><a href="${youtube_url}" target="_blank" rel="noopener" class="full-link" style="justify-content: center">Link</a></td>
       `;
       tbody.appendChild(tr);
     }

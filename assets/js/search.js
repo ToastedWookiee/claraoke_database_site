@@ -15,11 +15,11 @@
     const table = document.getElementById('resultsTable');
     if (!table) return;
 
-    const containerWidth = Math.min(container.offsetWidth, 1025);
+    const containerWidth = Math.min(container.offsetWidth, 1020);
 
     const col3Width = 100;
     const col4Width = 65;
-    const maxCol1Col2 = 860;
+    const maxCol1Col2 = 855;
     const minCol1Width = 250;
     const maxCol1Width = 500;
 
@@ -87,9 +87,9 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="col-song"><span class="truncate" title="${item.song} / ${item.artist}">${item.song} / ${item.artist}</span></td>
-        <td class="col-video"><span class="truncate" title="${item.video}"><a href="../pages/video.html?videoID=${item.videoid}" target="_self">${item.video}</target></span></td>
+        <td class="col-video"><a href="../pages/video.html?videoID=${item.videoid}" target="_self" class="full-link" style="justify-content: left;"><span class="truncate" title="${item.video}">${item.video}</span></a></td>
         <td class="col-date">${item.date}</td>
-        <td class="col-link"><a href="${item.link}" class="video-link" target="_blank" rel="noopener">Link</a></td>
+        <td class="col-link"><a href="${item.link}" class="full-link" target="_blank" rel="noopener">Link</a></td>
       `;
       resultsBody.appendChild(tr);
     }
