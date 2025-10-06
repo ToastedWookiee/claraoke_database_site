@@ -253,7 +253,7 @@ a {
   margin-top: var(--space-8);
   background: var(--color-200);
   border-top: 1px solid var(--color-600);
-  padding: var(--space-6);
+  padding: var(--space-4);
   color: var(--color-600);
 }
 .footer__inner {
