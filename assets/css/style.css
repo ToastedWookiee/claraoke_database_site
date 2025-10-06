@@ -2,23 +2,16 @@
    Global Variables
    ========================= */
 :root {
-  --bg-900: #1086ef;
-  --bg-800: #48a0ef;
-  --bg-700: #034077;
-  --bg-600: #0367c0;
-  --bg-500: #0375d8;
-
-  --primary-600: #034077;
-  --primary-500: #0367c0;
-  --primary-400: #1086ef;
-  --primary-300: #48a0ef;
-  --primary-200: #8cc2f2;
+  --color-100: #8cc2f2;
+  --color-200: #48a0ef;
+  --color-300: #1086ef;
+  --color-400: #0375d8;
+  --color-500: #0367c0;
+  --color-600: #034077;
 
   --accent-yellow: #ffb700;
 
   --text-100: #000000; /* primary text */
-  --text-200: #8cc2f2; /* secondary text */
-  --text-300: #034077; /* tertiary text */
 
   --shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
 
@@ -55,7 +48,7 @@ body {
     Helvetica,
     sans-serif;
   color: var(--text-100);
-  background: var(--bg-900);
+  background: var(--color-300);
 }
 
 a {
@@ -70,8 +63,8 @@ a {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--bg-600);
-  border-bottom: 1px solid var(--bg-700);
+  background: var(--color-500);
+  border-bottom: 1px solid var(--color-600);
   padding: var(--space-3) var(--space-6);
   display: flex;
   align-items: center;
@@ -101,7 +94,7 @@ a {
   background: radial-gradient(
     circle at 30% 30%,
     var(--accent-yellow) 0%,
-    var(--bg-800) 70%
+    var(--color-200) 70%
   );
   box-shadow:
     0 0 6px rgba(255, 183, 0, 0.9),
@@ -115,7 +108,7 @@ a {
 }
 .brand__subtitle {
   margin: 0.1rem 0 0 0;
-  color: var(--text-200);
+  color: var(--color-100);
   font-size: 0.9rem;
 }
 
@@ -138,8 +131,8 @@ a {
   position: sticky;
   top: 84px;
   align-self: start;
-  background: var(--bg-800);
-  border: 1px solid var(--bg-700);
+  background: var(--color-200);
+  border: 1px solid var(--color-600);
   border-radius: var(--radius-md);
   padding: var(--space-4);
   display: flex;
@@ -173,20 +166,20 @@ a {
     color 0.18s ease;
 }
 .nav__link:hover {
-  background: var(--primary-500);
+  background: var(--color-500);
   color: var(--accent-yellow);
   border-color: var(--accent-yellow);
 }
 .nav__link.is-active {
-  background: linear-gradient(180deg, var(--primary-500), var(--primary-400));
+  background: linear-gradient(180deg, var(--color-500), var(--color-300));
   color: var(--accent-yellow);
-  border-color: var(--bg-700);
+  border-color: var(--color-600);
 }
 
 .sidebar__footer {
   margin-top: auto;
-  color: var(--text-300);
-  border-top: 1px dashed var(--text-300);
+  color: var(--color-600);
+  border-top: 1px dashed var(--color-600);
   padding-top: var(--space-3);
   font-family: 'Consolas', 'Courier New', monospace;
 }
@@ -210,8 +203,8 @@ a {
    ========================= */
 .iframe-wrap {
   position: relative;
-  background: var(--bg-800);
-  border: 1px solid var(--bg-700);
+  background: var(--color-200);
+  border: 1px solid var(--color-600);
   border-radius: var(--radius-md);
   overflow: hidden;
 }
@@ -222,7 +215,7 @@ a {
   height: 70vh;
   border: 0;
   display: block;
-  background: var(--bg-900);
+  background: var(--color-300);
   color: var(--text-100);
 }
 
@@ -249,7 +242,7 @@ a {
 }
 
 .content-wrap {
-  background: var(--bg-800);
+  background: var(--color-200);
   overflow: auto;
 }
 
@@ -258,10 +251,10 @@ a {
    ========================= */
 .site-footer {
   margin-top: var(--space-8);
-  background: var(--bg-800);
-  border-top: 1px solid var(--bg-700);
+  background: var(--color-200);
+  border-top: 1px solid var(--color-600);
   padding: var(--space-6);
-  color: var(--text-300);
+  color: var(--color-600);
 }
 .footer__inner {
   max-width: var(--maxw);
@@ -276,16 +269,16 @@ a {
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.9rem;
-  background: var(--primary-500);
-  color: var(--text-200);
-  border: 1px solid var(--primary-300);
+  background: var(--color-500);
+  color: var(--color-100);
+  border: 1px solid var(--color-200);
   border-radius: var(--radius-md);
   cursor: pointer;
   box-shadow: var(--shadow);
 }
 .btn:hover {
-  background: var(--primary-400);
-  border-color: var(--primary-400);
+  background: var(--color-300);
+  border-color: var(--color-300);
 }
 .btn:focus-visible,
 .nav__link:focus-visible {
@@ -294,12 +287,12 @@ a {
 }
 .btn--outline {
   color: var(--text-100);
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--color-600);
 }
 .btn--outline:hover {
-  background: var(--primary-300);
-  color: var(--text-300);
-  border-color: var(--primary-600);
+  background: var(--color-200);
+  color: var(--color-600);
+  border-color: var(--color-600);
 }
 
 /* =========================
@@ -315,14 +308,14 @@ a {
 .searchbar input[type='text'] {
   flex: 1 1 280px;
   padding: 0.6rem 0.8rem;
-  border: 1px solid var(--bg-700);
+  border: 1px solid var(--color-600);
   border-radius: var(--radius-md);
-  background: var(--bg-900);
+  background: var(--color-300);
   color: var(--text-100);
 }
 
 .searchbar input::placeholder {
-  color: var(--text-300);
+  color: var(--color-600);
 }
 
 /* Progress/loading indicator */
@@ -341,15 +334,14 @@ a {
 /* =========================
    Tables
    ========================= */
-.table-wrap {
-  background: var(--bg-800);
-  border: 1px solid var(--bg-700);
+.table-container {
+  background: var(--color-200);
+  border: 1px solid var(--color-600);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow);
   overflow-y: auto;
   overflow-x: auto;
   transition: max-height 0.2s ease;
-  max-height: calc(100vh - 40px);
 }
 
 .table {
@@ -362,23 +354,28 @@ a {
 .table th,
 .table td {
   padding: 0rem 0.5rem;
-  border-bottom: 1px solid var(--bg-700);
+  border-bottom: 1px solid var(--color-600);
 }
 .table thead th {
-  background: var(--primary-600);
+  background: var(--color-600);
   color: var(--accent-yellow);
   text-align: left;
   font-weight: 700;
 }
 .table tbody tr:nth-child(odd) {
-  background-color: var(--bg-500);
+  background-color: var(--color-400);
 }
 .table tbody tr:nth-child(even) {
-  background-color: var(--primary-400);
+  background-color: var(--color-300);
 }
 .table tbody tr:hover {
-  background: var(--primary-300);
+  background: var(--color-200);
   color: var(--text-100);
+}
+
+/* Modifier for search results table */
+.table--search {
+  min-width: 565px;
 }
 
 th.sorted-asc::after {
@@ -390,7 +387,7 @@ th.sorted-desc::after {
 .list-thumbnail {
   vertical-align: middle;
   clip-path: inset(6px 0 6px 0);
-  border: 1px solid var(--primary-600);
+  border: 1px solid var(--color-600);
 }
 /* =========================
    Responsive
@@ -424,20 +421,8 @@ th.sorted-desc::after {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  display: block; /* block inside td */
-  min-width: 150px; /* ensure it's readable */
-  max-width: 100%; /* stay within its td */
-}
-
-.truncate-300 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  display: block; /* block inside td */
-  min-width: 300px; /* ensure it's readable */
-  max-width: 100%; /* stay within its td */
+  display: block;
+  max-width: 100%;
 }
 
 /* Make entire cells clickable */
@@ -467,22 +452,11 @@ th.sorted-desc::after {
    Video info
    ========================= */
 
-.video-table-wrap {
-  background: var(--bg-800);
-  border: 1px solid var(--bg-700);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow);
-  overflow-y: auto;
-  overflow-x: auto;
-  transition: max-height 0.2s ease;
-  max-height: calc(100vh - 275px);
-}
-
 .video-item {
   display: flex;
   flex-direction: column; /* title on top */
-  background: var(--bg-800);
-  border: 1px solid var(--bg-700);
+  background: var(--color-200);
+  border: 1px solid var(--color-600);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow);
   padding: 10px;
@@ -539,71 +513,14 @@ th.sorted-desc::after {
   overflow-y: auto;
 }
 
-.search-table td.clickable-cell {
-  position: relative;
-  padding: 0;
-}
-
-.search-table td.clickable-cell .full-link {
-  display: flex;
-  align-items: center; /* vertical alignment */
+.table--search td.clickable-cell .full-link {
   justify-content: center;
-  width: 100%;
-  height: 100%;
   min-height: 34px;
-  padding: 0 0.5rem; /* reapply same padding as table cell */
-  box-sizing: border-box;
-  color: inherit;
-  text-decoration: none;
-}
-
-.search-table td.clickable-cell .full-link:hover {
-  text-decoration: underline;
 }
 
 /* =========================
    Search Results Table
    ========================= */
-
-.search-table-wrap {
-  background: var(--bg-800);
-  border: 1px solid var(--bg-700);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow);
-  overflow-y: auto;
-  overflow-x: auto;
-  transition: max-height 0.2s ease;
-  max-height: calc(100vh - 205px);
-}
-
-.search-table {
-  width: 100%;
-  min-width: 565px;
-  color: var(--text-100);
-  border-collapse: collapse;
-  table-layout: fixed; /* important: allows first col to grow naturally */
-}
-.search-table th,
-.search-table td {
-  padding: 0 0.5rem;
-  border-bottom: 1px solid var(--bg-700);
-}
-.search-table thead th {
-  background: var(--primary-600);
-  color: var(--accent-yellow);
-  text-align: left;
-  font-weight: 700;
-}
-.search-table tbody tr:nth-child(odd) {
-  background-color: var(--bg-500);
-}
-.search-table tbody tr:nth-child(even) {
-  background-color: var(--primary-400);
-}
-.search-table tbody tr:hover {
-  background: var(--primary-300);
-  color: var(--text-100);
-}
 
 /* First column: max 500px with truncation */
 .col-song {
@@ -643,8 +560,8 @@ th.sorted-desc::after {
   padding: 0;
 }
 
-.search-table td.col-video .full-link,
-.search-table td.col-link .full-link {
+.table--search td.col-video .full-link,
+.table--search td.col-link .full-link {
   display: flex;
   align-items: center; /* vertical alignment */
   justify-content: center;
@@ -657,7 +574,7 @@ th.sorted-desc::after {
   text-decoration: none;
 }
 
-.search-table td.col-video .full-link:hover,
-.search-table td.col-link .full-link:hover {
+.table--search td.col-video .full-link:hover,
+.table--search td.col-link .full-link:hover {
   text-decoration: underline;
 }

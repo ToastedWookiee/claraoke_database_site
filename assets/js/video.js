@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const row = document.createElement('tr');
           row.innerHTML = `
                         <td><span class="truncate" title="${song.TITLE || ''}">${song.TITLE || 'Unknown Title'}</span></td>
-                        <td><span class="truncate-300" title="${song.ARTIST || ''}">${song.ARTIST || 'Unknown Artist'}</span></td>
+                        <td><span class="truncate" title="${song.ARTIST || ''}" style="min-width: 300px">${song.ARTIST || 'Unknown Artist'}</span></td>
                         <td class="clickable-cell"><a href="${song_link}" class="full-link" target="_blank" rel="noopener">Link</a></td>
                     `;
           songListBody.appendChild(row);
