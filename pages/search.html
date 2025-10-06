@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -33,23 +33,36 @@
 
             // Clear stats
             resultsStats.innerHTML = '';
-          "
-        >
+          ">
           Clear
         </button>
       </form>
       <span id="resultsStats"></span>
-      
+
       <div id="progress" class="progress">Searching…</div>
 
       <div class="search-table-wrap" id="resultsContainer">
-        <table class="search-table" aria-describedby="progress" id="resultsTable">
+        <table
+          class="search-table"
+          aria-describedby="progress"
+          id="resultsTable">
           <thead>
             <tr>
-              <th data-type="string" data-sortable="true" class="col-song">Song / Artist</th>
-              <th data-type="string" class="col-video">Stream (Click to view info)</th>
-              <th data-type="date" class="col-date" style="text-align: center;">Date</th>
-              <th data-type="string" class="col-link" style="text-align: center;">Link</th>
+              <th data-type="string" data-sortable="true" class="col-song">
+                Song / Artist
+              </th>
+              <th data-type="string" class="col-video">
+                Stream (Click to view info)
+              </th>
+              <th data-type="date" class="col-date" style="text-align: center">
+                Date
+              </th>
+              <th
+                data-type="string"
+                class="col-link"
+                style="text-align: center">
+                Link
+              </th>
             </tr>
           </thead>
           <tbody id="resultsBody">

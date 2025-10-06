@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -7,8 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
+      rel="stylesheet" />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="icon" type="image/x-con" href="assets/images/favicon.ico" />
     <script defer src="assets/js/app.js"></script>
@@ -20,8 +19,7 @@
         class="menu-toggle"
         aria-label="Toggle navigation"
         aria-controls="sidebar"
-        aria-expanded="false"
-      >
+        aria-expanded="false">
         ☰
       </button>
       <div class="brand">
@@ -61,7 +59,9 @@
           <div id="update-display">
             <small>Latest Database Update:</small>
             <br />
-            <small>(UTC)&nbsp;&nbsp;: <span id="utc-time">Loading…</span></small>
+            <small
+              >(UTC)&nbsp;&nbsp;: <span id="utc-time">Loading…</span></small
+            >
             <br />
             <small>(Local): <span id="local-time">Loading…</span></small>
           </div>
@@ -69,38 +69,37 @@
           <script>
             async function fetchUpdateTime() {
               try {
-                const res = await fetch("php/db_time.php");
+                const res = await fetch('php/db_time.php');
                 const data = await res.json();
 
                 // Parse the UTC time string
-                const utcString = data.last_update + " UTC";
+                const utcString = data.last_update + ' UTC';
                 const date = new Date(utcString);
 
                 // Display UTC
-                document.getElementById("utc-time").textContent = date
+                document.getElementById('utc-time').textContent = date
                   .toISOString()
-                  .replace("T", " ")
-                  .replace(/\..+/, "");
+                  .replace('T', ' ')
+                  .replace(/\..+/, '');
 
                 // Display Local (YYYY-MM-DD HH:mm:ss in user's local timezone)
                 const localYear = date.getFullYear();
-                const localMonth = String(date.getMonth() + 1).padStart(2, "0");
-                const localDay = String(date.getDate()).padStart(2, "0");
+                const localMonth = String(date.getMonth() + 1).padStart(2, '0');
+                const localDay = String(date.getDate()).padStart(2, '0');
                 let localHours = date.getHours();
-                const localMinutes = String(date.getMinutes()).padStart(2, "0");
-                const localSeconds = String(date.getSeconds()).padStart(2, "0");
+                const localMinutes = String(date.getMinutes()).padStart(2, '0');
+                const localSeconds = String(date.getSeconds()).padStart(2, '0');
 
                 // AM/PM conversion
-                const ampm = localHours >= 12 ? "PM" : "AM";
+                const ampm = localHours >= 12 ? 'PM' : 'AM';
                 localHours = localHours % 12;
                 if (localHours === 0) localHours = 12; // midnight or noon
-                localHours = String(localHours).padStart(2, "0");
+                localHours = String(localHours).padStart(2, '0');
 
-                document.getElementById(
-                  "local-time"
-                ).textContent = `${localYear}-${localMonth}-${localDay} ${localHours}:${localMinutes}:${localSeconds}${ampm}`;
+                document.getElementById('local-time').textContent =
+                  `${localYear}-${localMonth}-${localDay} ${localHours}:${localMinutes}:${localSeconds}${ampm}`;
               } catch (err) {
-                console.error("Error fetching update time:", err);
+                console.error('Error fetching update time:', err);
               }
             }
 
@@ -123,8 +122,7 @@
             title="Content"
             src="pages/home.html"
             loading="lazy"
-            onload="hideIframeLoader()"
-          ></iframe>
+            onload="hideIframeLoader()"></iframe>
         </div>
       </main>
     </div>

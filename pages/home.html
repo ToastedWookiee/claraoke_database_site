@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -9,10 +9,10 @@
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
           if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("stats").innerHTML = this.responseText;
+            document.getElementById('stats').innerHTML = this.responseText;
           }
         };
-        xmlhttp.open("GET", "../php/stats.php", true);
+        xmlhttp.open('GET', '../php/stats.php', true);
         xmlhttp.send();
       };
     </script>
@@ -28,8 +28,10 @@
         menu to the left has options to search as well as view a full listing of
         databased streams and their song list.
       </p>
-      <p style="font-style: italic;">Disclaimer: This database is no where near perfect, there have been many different contributors, who each
-        have their own style of formatting their timestamp lists. Check the About page for more information.
+      <p style="font-style: italic">
+        Disclaimer: This database is no where near perfect, there have been many
+        different contributors, who each have their own style of formatting
+        their timestamp lists. Check the About page for more information.
       </p>
       <p>To start here are some statistics from the database:</p>
     </section>
