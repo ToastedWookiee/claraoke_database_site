@@ -448,6 +448,32 @@ th.sorted-desc::after {
   text-decoration: underline;
 }
 
+/* Loading Spinner */
+/* Spinner centering container */
+.loading-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 2.5em;
+  text-align: center;
+}
+
+.spinner {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  border: 5px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* =========================
    Video info
    ========================= */
