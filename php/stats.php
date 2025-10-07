@@ -16,14 +16,26 @@ function clean_artist_name($artist)
     // Remove parentheses (), brackets [], and braces {}
     $artist = preg_replace('/\s*[\(\[\{][^)\]\}]*[\)\]\}]/', '', $artist);
 
-    // Cut off at dash, slash, or comma
-    $artist = preg_replace('/\s*[-\/,].*/', '', $artist);
+    // Cut off at dash or slash
+    $artist = preg_replace('/\s*[-\/].*/', '', $artist);
 
     // Normalize spaces
     $artist = trim($artist);
     $artist = preg_replace('/\s+/', ' ', $artist); // collapse multiple spaces
 
     return $artist;
+}
+
+// Function to clean up song titles
+function clean_song_title($title)
+{
+    // Remove parentheses (), brackets [], and braces {}
+    $title = preg_replace('/\s*[\(\[\{][^)\]\}]*[\)\]\}]/', '', $title);
+
+    // Normalize spaces
+    $title = trim($title);
+    $title = preg_replace('/\s+/', ' ', $title); // collapse multiple spaces
+    return $title;
 }
 
 // Get total number of videos
@@ -88,9 +100,9 @@ foreach ($videoIDs as $videoID) {
             $artist = strtolower($row['ARTIST']);
             $artist = clean_artist_name($artist);
 
-            // If artist contains: "and", "&", or "with" then split and count each separately
-            if (preg_match('/\s+(and|&|with|feat\.|featuring|ft\.)\s+/', $artist)) {
-                $sub_artists = preg_split('/\s+(and|&|with|feat\.|featuring|ft\.)\s+/', clean_artist_name($row['ARTIST']));
+            // If artist contains: "and", "&", "with", "feat", "featuring", "ft.", "featuring", or "," then split and count each separately
+            if (preg_match('/\s+(and|&|with|feat\.|featuring|ft\.|,)\s+/', $artist)) {
+                $sub_artists = preg_split('/\s+(and|&|with|feat\.|featuring|ft\.|,)\s+/', clean_artist_name($row['ARTIST']));
                 foreach ($sub_artists as $sub_artist) {
                     $sub_artist = $sub_artist_ori = trim($sub_artist);
                     $sub_artist = strtolower($sub_artist);
@@ -152,13 +164,17 @@ foreach ($videoIDs as $videoID) {
         $stmt = $pdo->query($sql_query);                 // run the query
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {     // fetch as associative array
             $title = strtolower($row['TITLE']);
+            $title = clean_song_title($title);
+
             if (isset($songs[$title])) {
                 $songs[$title]['count']++;
             } else {
+                $title_trim = clean_song_title($row['TITLE']);
+                $artist_trim = clean_artist_name($row['ARTIST']);
                 $songs[$title] = array(
                     'count' => 1,
-                    'title' => $row['TITLE'], // Preserve original casing
-                    'artist' => $row['ARTIST']
+                    'title' => $title_trim,
+                    'artist' => $artist_trim
                 );
             }
         }
