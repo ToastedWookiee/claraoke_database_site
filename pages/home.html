@@ -4,44 +4,6 @@
     <meta charset="utf-8" />
     <title>Home</title>
     <link rel="stylesheet" href="../assets/css/style.css" type="text/css" />
-    <script>
-      window.onload = function () {
-        var stats = document.getElementById('stats');
-
-        // Create a wrapper for the loading spinner
-        const wrapper = document.createElement('div');
-        wrapper.className = 'loading-wrapper';
-
-        const spinner = document.createElement('span');
-        spinner.className = 'spinner';
-
-        const text = document.createElement('span');
-        text.textContent = 'Loading stats...';
-
-        wrapper.appendChild(spinner);
-        wrapper.appendChild(text);
-
-        stats.innerHTML = ''; // clear old content
-        stats.appendChild(wrapper);
-        stats.setAttribute('aria-busy', 'true');
-
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function () {
-          if (this.readyState === 4) {
-            if (this.status === 200) {
-              // Replace the loading spinner with the stats
-              stats.removeChild(wrapper);
-              stats.innerHTML = this.responseText;
-            } else {
-              stats.textContent = 'Failed to load stats.';
-            }
-            stats.setAttribute('aria-busy', 'false');
-          }
-        };
-        xmlhttp.open('GET', '../php/stats.php', true);
-        xmlhttp.send();
-      };
-    </script>
   </head>
   <body class="content-wrap" style="padding: 1.25rem">
     <section>
@@ -66,5 +28,7 @@
         <span class="spinner"></span> Loading stats...
       </div>
     </span>
+
+    <script src="../assets/js/home.js"></script>
   </body>
 </html>
