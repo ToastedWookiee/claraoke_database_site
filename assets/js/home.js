@@ -31,11 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
       return list;
     }
 
+    // Format the generation time of the stats
+    const generationTime = new Date(parseFloat(data.generated_at) * 1000);
+    const updateTime = generationTime
+      .toISOString()
+      .replace('T', ' ')
+      .replace(/\..+/, '');
+
     // Create HTML element
     const section = document.createElement('section');
 
     section.innerHTML = `
-            <h3>Database Statistics</h3>
+            <span style="font-weight: bold; font-size: 1.25rem">Database Statistics</span> <small>(Generated ${updateTime} UTC)</small>
             <ul>
                 <li>Total Videos: <strong>${data.total_videos}</strong></li>
                 <li>Total Songs: <strong>${data.total_songs}</strong></li>

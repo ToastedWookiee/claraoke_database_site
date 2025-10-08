@@ -189,7 +189,7 @@ a {
    ========================= */
 .main {
   min-height: 60vh;
-  padding-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
 }
 
 .page-title {
