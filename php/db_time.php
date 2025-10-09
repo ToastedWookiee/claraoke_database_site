@@ -4,15 +4,8 @@ header('Access-Control-Allow-Origin: https://clara.acormiz.com');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Get our database config and connect to the database
-$config = require 'db.php';
-$dsn = "mysql:host={$config['host']};dbname={$config['db']};charset=utf8mb4";
+$pdo = require 'db.php';
 
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_EMULATE_PREPARES => false,
-];
-
-$pdo = new PDO($dsn, $config['user'], $config['pass'], $options);
 
 // Always fetch in UTC
 $pdo->exec("SET time_zone = '+00:00'");

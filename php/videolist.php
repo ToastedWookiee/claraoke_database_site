@@ -3,16 +3,11 @@ header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: https://clara.acormiz.com');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Get our database config and connect to the database
-$config = require 'db.php';
-$dsn = "mysql:host={$config['host']};dbname={$config['db']};charset=utf8mb4";
+$total_start = microtime(true);
 
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_EMULATE_PREPARES => false,
-];
-
-$pdo = new PDO($dsn, $config['user'], $config['pass'], $options);
+$pdo_start = microtime(true);
+$pdo = require 'db.php';
+$pdo_end = microtime(true);
 
 // Query the karaokes and videos tables to get all video information in one go
 $sql_query = "
@@ -28,9 +23,13 @@ $sql_query = "
     ORDER BY
         k.TIME DESC
 ";
+
 $videos = [];
 try {
+    $query_start = microtime(true);
     $stmt = $pdo->query($sql_query);
+    $query_end = microtime(true);
+
     $videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "❌ Query failed: " . $e->getMessage();
@@ -38,6 +37,8 @@ try {
     // For now, we'll just show the error and stop.
     exit;
 }
+
+$total_end = microtime(true);
 
 // Format the date for each video
 foreach ($videos as &$video) {
@@ -59,6 +60,12 @@ echo json_encode([
     'count' => count($videos),
     'items' => $videos,
 ]);
+
+error_log(json_encode([
+    'connect_ms' => ($pdo_end - $pdo_start) * 1000,
+    'query_ms' => ($query_end - $query_start) * 1000,
+    'total_ms' => ($total_end - $total_start) * 1000,
+]));
 
 // Close the connection
 $pdo = null;

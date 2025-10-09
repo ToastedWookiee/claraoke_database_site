@@ -10,16 +10,8 @@ if ($videoID === '') {
     exit;
 }
 
-// Get our database config and connect to the database
-$config = require 'db.php';
-$dsn = "mysql:host={$config['host']};dbname={$config['db']};charset=utf8mb4";
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_EMULATE_PREPARES => false,
-];
-
 try {
-    $pdo = new PDO($dsn, $config['user'], $config['pass'], $options);
+    $pdo = require 'db.php';
 
     // --- SQL INJECTION MITIGATION ---
     // Get the list of all tables in the database
