@@ -23,15 +23,9 @@ if (isset($data['q'])) {
 $results = [];
 
 if ($query !== '') {
-  $keywords = preg_split('/\s+/', $query);
-  $conds = [];
-  $params = [];
-
-  foreach ($keywords as $word) {
-    $conds[] = "(title LIKE ? OR artist LIKE ?)";
-    $params[] = "%$word%";
-    $params[] = "%$word%";
-  }
+  // Build boolean query
+  $search_terms = array_map(fn($word) => '+' . $word, explode(' ', $query));
+  $boolean_query = implode(' ', $search_terms);
 
   // --- SQL INJECTION MITIGATION ---
   // Get the list of all tables in the database
@@ -54,66 +48,78 @@ if ($query !== '') {
   $valid_video_tables = array_intersect($videoIDs_from_karaokes, $all_tables);
   // --- END SQL INJECTION MITIGATION ---
 
-  // --- PERFORMANCE OPTIMIZATION ---
-  // Pre-fetch all video information for the valid tables to avoid N+1 queries
-  $video_map_start = microtime(true);
-  $video_info_map = [];
-  if (!empty($valid_video_tables)) {
-    // Create placeholders for the IN clause.
-    // array_values is used to reset keys in case array_intersect resulted in non-sequential keys.
-    $placeholders = implode(',', array_fill(0, count($valid_video_tables), '?'));
-    $sql_video_info = "SELECT VIDEOID, TITLE, TIME FROM videos WHERE VIDEOID IN ($placeholders)";
-
-    $exec3_start = microtime(true);
-    $stmt_video_info = $pdo->prepare($sql_video_info);
-    $stmt_video_info->execute(array_values($valid_video_tables));
-    $exec3_end = microtime(true);
-
-    $fetch3_start = microtime(true);
-    while ($video_row = $stmt_video_info->fetch(PDO::FETCH_ASSOC)) {
-      $video_info_map[$video_row['VIDEOID']] = $video_row;
-    }
-    $fetch3_end = microtime(true);
-  }
-  $video_map_end = microtime(true);
-  // --- END PERFORMANCE OPTIMIZATION ---
-
   // Loop through each videoID and search its table for matching songs or artists
   $search_loop_time = 0;
-  foreach ($valid_video_tables as $videoID) {
-    $search_loop_start = microtime(true);
+  $search_loop = 0;
+
+  // Query to get VIDEOID tables that have matching search terms
+  $sql = "SELECT VIDEOID FROM karaokes
+          WHERE MATCH(SEARCHTITLE, SEARCHARTIST) AGAINST (? IN BOOLEAN MODE)";
+
+  $search_loop_start = microtime(true);
+
+  $exec3_start = microtime(true);
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute([$boolean_query]);
+  $exec3_end = microtime(true);
+
+  $fetch3_start = microtime(true);
+  $matching_videoids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+  $fetch3_end = microtime(true);
+
+  foreach ($matching_videoids as $videoID) {
+    // --- SQL INJECTION MITIGATION ---
+    // Check if the requested videoID is a valid table
+    if (!in_array($videoID, $valid_video_tables)) {
+      continue;
+    }
+    // --- END SQL INJECTION MITIGATION ---
+
     // Sanitize table name as a secondary defense measure. The primary defense is the whitelist validation above.
     $table = preg_replace('/[^a-zA-Z0-9_-]/', '', $videoID);
-    $sql_query = "SELECT * FROM `$table` WHERE ";
-    $sql_query .= implode(' AND ', $conds);
+
+    # $sql_query = "SELECT * FROM `$table` WHERE MATCH(TITLE, ARTIST) AGAINST (? IN BOOLEAN MODE)";
+    $sql_query = "
+        SELECT 
+          s.TITLE AS song,
+          s.ARTIST AS artist,
+          s.STARTTIME AS time,
+          v.TITLE AS video,
+          v.VIDEOID AS videoid,
+          v.TIME AS date
+        FROM `$table` AS s
+        LEFT JOIN videos AS v ON s.VIDEOID = v.VIDEOID WHERE MATCH(s.TITLE, s.ARTIST) AGAINST (? IN BOOLEAN MODE)
+        ORDER BY v.TIME DESC;
+    ";
+
     try {
       $exec4_start = microtime(true);
       $stmt = $pdo->prepare($sql_query);
-      $stmt->execute($params);
+      $stmt->execute([$boolean_query]);
       $exec4_end = microtime(true);
 
       $fetch4_start = microtime(true);
-      while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        // Get video Title and Date from the pre-fetched map
-        $video_info = $video_info_map[$videoID] ?? null;
+      $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $fetch4_end = microtime(true);
 
-        $title = $video_info['TITLE'] ?? 'Unknown';
+      foreach ($res as $row) {
+        // Format the date
         $date = 'Unknown';
-        if (isset($video_info['TIME'])) {
-          $dt = DateTime::createFromFormat('Y-m-d H:i:s', $video_info['TIME']);
+        if (isset($row['date'])) {
+          $dt = DateTime::createFromFormat('Y-m-d H:i:s', $row['date']);
           if ($dt) {
             $date = $dt->format('Y-m-d');
           }
         }
 
         // Format the song start time for use in youtube link
-        $timestamp = preg_replace("/(\d{2}):(\d{2}):(\d{2})/", "$1h$2m$3s", $row['STARTTIME']);
+        $timestamp = preg_replace("/(\d{2}):(\d{2}):(\d{2})/", "$1h$2m$3s", $row['time']);
 
         $results[] = [
-          'song' => $row['TITLE'],
-          'artist' => $row['ARTIST'],
-          'video' => $title,
-          'videoid' => $videoID,
+          'song' => $row['song'],
+          'artist' => $row['artist'],
+          'video' => $row['video'] ?? 'Unknown',
+          'videoid' => $row['videoid'],
           'date' => $date,
           'link' => "https://www.youtube.com/watch?v={$videoID}&t={$timestamp}",
         ];
@@ -121,20 +127,20 @@ if ($query !== '') {
     } catch (PDOException $e) {
       // Ignore errors here (such as table not existing)
     }
-    $fetch4_end = microtime(true);
 
-    $search_loop_end = microtime(true);
-    $search_loop_time += $search_loop_end - $search_loop_start;
+    $search_loop++;
   }
+  $search_loop_end = microtime(true);
+  $search_loop_time = $search_loop_end - $search_loop_start;
 }
-
-$total_end = microtime(true);
 
 echo json_encode([
   'query' => $query,
   'count' => count($results),
   'items' => $results
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+$total_end = microtime(true);
 
 error_log(json_encode([
   'connect_ms' => ($pdo_end - $pdo_start) * 1000,
@@ -146,8 +152,9 @@ error_log(json_encode([
   'fetch3_ms' => ($fetch3_end - $fetch3_start) * 1000,
   'exec4_ms' => ($exec4_end - $exec4_start) * 1000,
   'fetch4_ms' => ($fetch4_end - $fetch4_start) * 1000,
-  'video_map_ms' => ($video_map_end - $video_map_start) * 1000,
+  'search_loops' => $search_loop,
   'search_loop_ms' => $search_loop_time * 1000,
+  'search_loop_avg_ms' => $search_loop_time * 1000 / $search_loop,
   'total_ms' => ($total_end - $total_start) * 1000,
 ]));
 
