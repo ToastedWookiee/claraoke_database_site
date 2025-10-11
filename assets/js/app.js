@@ -58,6 +58,19 @@
       const isOpen = sidebar.classList.toggle('is-open');
       menuToggle.setAttribute('aria-expanded', String(isOpen));
     });
+
+    // Close sidebar when a nav link is clicked (on mobile)
+    const navLinks = sidebar.querySelectorAll('a');
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        // Only close if sidebar is open (mobile view)
+        if (sidebar.classList.contains('is-open')) {
+          sidebar.classList.remove('is-open');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
   }
 
   // Initial loader brief hint
