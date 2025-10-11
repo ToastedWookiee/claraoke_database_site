@@ -604,3 +604,44 @@ th.sorted-desc::after {
 .table--search td.col-link .full-link:hover {
   text-decoration: underline;
 }
+
+/* =========================
+   Responsive Search Table
+   ========================= */
+@media (max-width: 768px) {
+  .table--search thead {
+    display: none;
+  }
+
+  .table--search tbody tr.main-row {
+    cursor: pointer;
+  }
+
+  .table--search tbody tr.main-row:hover {
+    background-color: var(--color-500);
+  }
+
+  .table--search tbody tr.expandable-row {
+    display: none;
+  }
+
+  .table--search tbody tr.expandable-row.is-visible {
+    display: table-row;
+  }
+
+  .table--search tbody tr.expandable-row td {
+    padding: var(--space-4);
+    background-color: var(--color-200);
+  }
+
+  .table--search .col-video,
+  .table--search .col-date,
+  .table--search .col-link {
+    display: none;
+  }
+
+  .table--search .col-song {
+    display: block;
+    width: 100%;
+  }
+}
