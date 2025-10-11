@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const videoSongsCount = document.getElementById('video-songs-count');
   const videoLink = document.getElementById('video-link');
   const songListBody = document.getElementById('song-list-body');
+  const tableContainer = document.getElementsByClassName('table-container')[0];
 
   const urlParams = new URLSearchParams(window.location.search);
   const videoID = urlParams.get('videoID');
@@ -56,6 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
           songListBody.appendChild(row);
         });
+
+        if (!window.matchMedia('(min-width: 769px)').matches) {
+          // Override style max-height
+          tableContainer.style.maxHeight = 'calc(100vh - 350px)';
+        }
       } else {
         const row = document.createElement('tr');
         row.innerHTML = `<td colspan="3">No songs found for this video.</td>`;

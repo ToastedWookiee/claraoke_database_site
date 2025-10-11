@@ -678,3 +678,19 @@ th.sorted-desc::after {
     padding: var(--space-2);
   }
 }
+
+/* =========================
+   Responsive Video Page
+   ========================= */
+@media (max-width: 768px) {
+  .video-body {
+    flex-direction: column;
+  }
+  .video-thumb {
+    align-self: center;
+  }
+  .table-container {
+    overflow-x: auto;
+    max-height: calc(100vh - 350px);
+  }
+}
