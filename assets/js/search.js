@@ -97,9 +97,9 @@
       expandableRow.className = 'expandable-row';
       expandableRow.innerHTML = `
         <td colspan="4">
-          <div><strong>Stream:</strong> <a href="../pages/video.html?videoID=${item.videoid}" target="_self">${item.video}</a></div>
+          <div><strong>Stream:</strong> <a href="../pages/video.html?videoID=${item.videoid}" target="_self" class="link">${item.video}</a></div>
           <div><strong>Date:</strong> ${item.date}</div>
-          <div><strong>Link:</strong> <a href="${item.link}" target="_blank" rel="noopener">YouTube</a></div>
+          <div><strong>Song Link:</strong> <a href="${item.link}" target="_blank" rel="noopener" class="link">YouTube</a></div>
         </td>
       `;
 
@@ -142,6 +142,12 @@
       renderRows(data.items || []);
       if (window.matchMedia('(min-width: 769px)').matches) {
         resizeTable(); // Resize table only on desktop
+      } else {
+        // On mobile we need to set the column with class "col-song" to a colspan of 4
+        const songCols = document.querySelectorAll('.col-song');
+        songCols.forEach((col) => {
+          col.colSpan = 4;
+        });
       }
     } catch (err) {
       console.error(err);
