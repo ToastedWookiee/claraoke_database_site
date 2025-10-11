@@ -84,14 +84,31 @@
     hasSearched = true;
 
     for (const item of items) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
+      const mainRow = document.createElement('tr');
+      mainRow.className = 'main-row';
+      mainRow.innerHTML = `
         <td class="col-song"><span class="truncate" title="${item.song} / ${item.artist}">${item.song} / ${item.artist}</span></td>
         <td class="col-video"><a href="../pages/video.html?videoID=${item.videoid}" target="_self" class="full-link" style="justify-content: left;"><span class="truncate" title="${item.video}">${item.video}</span></a></td>
         <td class="col-date">${item.date}</td>
         <td class="col-link"><a href="${item.link}" class="full-link" target="_blank" rel="noopener">Link</a></td>
       `;
-      resultsBody.appendChild(tr);
+
+      const expandableRow = document.createElement('tr');
+      expandableRow.className = 'expandable-row';
+      expandableRow.innerHTML = `
+        <td colspan="4">
+          <div><strong>Stream:</strong> <a href="../pages/video.html?videoID=${item.videoid}" target="_self">${item.video}</a></div>
+          <div><strong>Date:</strong> ${item.date}</div>
+          <div><strong>Link:</strong> <a href="${item.link}" target="_blank" rel="noopener">YouTube</a></div>
+        </td>
+      `;
+
+      resultsBody.appendChild(mainRow);
+      resultsBody.appendChild(expandableRow);
+
+      mainRow.addEventListener('click', () => {
+        expandableRow.classList.toggle('is-visible');
+      });
     }
   }
 
@@ -123,7 +140,9 @@
       const data = await res.json();
       displayStats(data || []);
       renderRows(data.items || []);
-      resizeTable(); // Resize table after rendering new rows
+      if (window.matchMedia('(min-width: 769px)').matches) {
+        resizeTable(); // Resize table only on desktop
+      }
     } catch (err) {
       console.error(err);
       displayStats([]);

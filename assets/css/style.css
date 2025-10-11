@@ -604,3 +604,59 @@ th.sorted-desc::after {
 .table--search td.col-link .full-link:hover {
   text-decoration: underline;
 }
+
+/* =========================
+   Responsive Search Table
+   ========================= */
+.table--search tbody tr.expandable-row {
+  display: none;
+}
+
+/*
+  Since expandable rows are also <tr>, the simple odd/even logic breaks.
+  main-rows are at positions 1, 3, 5, 7...
+  We want the main-rows to alternate color.
+    - Row 1 (1st main-row) should be odd color.
+    - Row 3 (2nd main-row) should be even color.
+    - Row 5 (3rd main-row) should be odd color.
+    - Row 7 (4th main-row) should be even color.
+  The default tr:nth-child(odd) rule makes all main-rows the same color.
+  This override targets the 2nd, 4th, 6th... main-row and gives it the "even" color.
+*/
+.table--search tbody tr.main-row:nth-child(4n + 3) {
+  background-color: var(--color-300);
+}
+
+@media (max-width: 768px) {
+  .table--search thead {
+    display: none;
+  }
+
+  .table--search tbody tr.main-row {
+    cursor: pointer;
+  }
+
+  .table--search tbody tr.main-row:hover {
+    background-color: var(--color-500);
+  }
+
+  .table--search tbody tr.expandable-row.is-visible {
+    display: table-row;
+  }
+
+  .table--search tbody tr.expandable-row td {
+    padding: var(--space-4);
+    background-color: var(--color-200);
+  }
+
+  .table--search .col-video,
+  .table--search .col-date,
+  .table--search .col-link {
+    display: none;
+  }
+
+  .table--search .col-song {
+    display: block;
+    width: 100%;
+  }
+}
