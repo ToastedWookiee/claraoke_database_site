@@ -53,8 +53,11 @@ if ($query !== '') {
   $search_loop = 0;
 
   // Query to get VIDEOID tables that have matching search terms
-  $sql = "SELECT VIDEOID FROM karaokes
-          WHERE MATCH(SEARCHTITLE, SEARCHARTIST) AGAINST (? IN BOOLEAN MODE)";
+  $sql = "
+      SELECT VIDEOID FROM karaokes
+      WHERE MATCH(SEARCHTITLE, SEARCHARTIST) AGAINST (? IN BOOLEAN MODE)
+      ORDER BY TIME DESC;
+  ";
 
   $search_loop_start = microtime(true);
 
@@ -88,8 +91,7 @@ if ($query !== '') {
           v.VIDEOID AS videoid,
           v.TIME AS date
         FROM `$table` AS s
-        LEFT JOIN videos AS v ON s.VIDEOID = v.VIDEOID WHERE MATCH(s.TITLE, s.ARTIST) AGAINST (? IN BOOLEAN MODE)
-        ORDER BY v.TIME DESC;
+        LEFT JOIN videos AS v ON s.VIDEOID = v.VIDEOID WHERE MATCH(s.TITLE, s.ARTIST) AGAINST (? IN BOOLEAN MODE);
     ";
 
     try {
@@ -141,6 +143,10 @@ echo json_encode([
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 $total_end = microtime(true);
+
+if ($search_loop == 0) {
+  $search_loop = 0;
+}
 
 error_log(json_encode([
   'connect_ms' => ($pdo_end - $pdo_start) * 1000,

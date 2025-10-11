@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
       header.style.cursor = 'pointer';
 
       header.addEventListener('click', () => {
-        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const rows = Array.from(tbody.querySelectorAll('.main-row'));
         const isAsc = header.classList.contains('sorted-asc');
 
         rows.sort((a, b) => {
@@ -243,6 +243,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Apply sorted rows
         rows.forEach((row) => tbody.appendChild(row));
+
+        // Fix row background color after sorting
+        rows.forEach((row, i) => {
+          row.style.backgroundColor = i % 2 === 0 ? '#0375d8' : '#1086ef';
+        });
       });
     }
   });
