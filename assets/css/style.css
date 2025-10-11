@@ -608,6 +608,10 @@ th.sorted-desc::after {
 /* =========================
    Responsive Search Table
    ========================= */
+.table--search tbody tr.expandable-row {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .table--search thead {
     display: none;
@@ -619,10 +623,6 @@ th.sorted-desc::after {
 
   .table--search tbody tr.main-row:hover {
     background-color: var(--color-500);
-  }
-
-  .table--search tbody tr.expandable-row {
-    display: none;
   }
 
   .table--search tbody tr.expandable-row.is-visible {
