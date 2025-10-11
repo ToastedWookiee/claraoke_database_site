@@ -140,7 +140,9 @@
       const data = await res.json();
       displayStats(data || []);
       renderRows(data.items || []);
-      resizeTable(); // Resize table after rendering new rows
+      if (window.matchMedia('(min-width: 769px)').matches) {
+        resizeTable(); // Resize table only on desktop
+      }
     } catch (err) {
       console.error(err);
       displayStats([]);
