@@ -56,6 +56,14 @@ a {
   text-decoration: none;
 }
 
+.link {
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
 /* =========================
    Header
    ========================= */
@@ -628,6 +636,14 @@ th.sorted-desc::after {
 }
 
 @media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .searchbar {
+    flex-wrap: nowrap;
+  }
+
   .table--search thead {
     display: none;
   }
@@ -645,7 +661,7 @@ th.sorted-desc::after {
   }
 
   .table--search tbody tr.expandable-row td {
-    padding: var(--space-4);
+    padding: var(--space-2);
     background-color: var(--color-200);
   }
 
@@ -656,7 +672,9 @@ th.sorted-desc::after {
   }
 
   .table--search .col-song {
-    display: block;
+    display: table-cell;
     width: 100%;
+    max-width: 100%;
+    padding: var(--space-2);
   }
 }
