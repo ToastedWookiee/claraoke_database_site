@@ -20,12 +20,27 @@ if (isset($data['q'])) {
   $query = trim($_GET['q'] ?? '');
 }
 
+// Query processing
+$query = preg_replace('/\s+/', ' ', $query);
+$query = str_replace(['“', '”', '‘', '’'], "'", $query); // smart quotes to normal
+
+
 $results = [];
 
 if ($query !== '') {
   // Build boolean query
-  $search_terms = array_map(fn($word) => '+' . $word, explode(' ', $query));
-  $boolean_query = implode(' ', $search_terms);
+  $terms = preg_split('/\s+/', $query);
+  $safe_terms = [];
+
+  foreach ($terms as $term) {
+      // remove any characters that can break fulltext syntax
+      $term = preg_replace('/[^\p{L}\p{N}\']+/u', '', $term);
+      if ($term !== '') {
+          $safe_terms[] = '+' . $term;
+      }
+  }
+
+  $boolean_query = implode(' ', $safe_terms);
 
   // --- SQL INJECTION MITIGATION ---
   // Get the list of all tables in the database
