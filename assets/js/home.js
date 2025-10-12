@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function listArtists(artists) {
       let list = '<ol>';
       for (const artist of artists) {
-        list += `<li><a href='../pages/search.html?q=${encodeURIComponent(artist[1].artist)}' class='video-link' target='_self' title='Search for ${artist[1].artist}'>${artist[1].artist}</a> - ${artist[1].count} songs</li>`;
+        list += `<li><a href="../pages/search.html?q=${encodeURIComponent(artist[1].artist)}" class='video-link' target='_self' title='Search for ${artist[1].artist}'>${artist[1].artist}</a> - ${artist[1].count} songs</li>`;
       }
       list += '</ol>';
       return list;
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function listSongs(songs) {
       let list = '<ol>';
       for (const song of songs) {
-        list += `<li><a href='../pages/search.html?q=${encodeURIComponent(song[1].title)}' class='video-link' target='_self' title='Search for ${song[1].title}'>${song[1].title} by ${song[1].artist}</a> - ${song[1].count} times</li>`;
+        list += `<li><a href="../pages/search.html?q=${encodeURIComponent(song[1].title)}" class='video-link' target='_self' title='Search for ${song[1].title}'>${song[1].title} by ${song[1].artist}</a> - ${song[1].count} times</li>`;
       }
       list += '</ol>';
       return list;
