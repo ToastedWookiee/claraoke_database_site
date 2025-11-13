@@ -33,11 +33,11 @@ if ($query !== '') {
   $safe_terms = [];
 
   foreach ($terms as $term) {
-      // remove any characters that can break fulltext syntax
-      $term = preg_replace('/[^\p{L}\p{N}\']+/u', '', $term);
-      if ($term !== '') {
-          $safe_terms[] = '+' . $term;
-      }
+    // remove any characters that can break fulltext syntax
+    $term = preg_replace('/[^\p{L}\p{N}\']+/u', '', $term);
+    if ($term !== '') {
+      $safe_terms[] = '+' . $term;
+    }
   }
 
   $boolean_query = implode(' ', $safe_terms);
@@ -89,6 +89,7 @@ if ($query !== '') {
     // --- SQL INJECTION MITIGATION ---
     // Check if the requested videoID is a valid table
     if (!in_array($videoID, $valid_video_tables)) {
+      error_log("Skipping invalid or non-existent table: $videoID");
       continue;
     }
     // --- END SQL INJECTION MITIGATION ---

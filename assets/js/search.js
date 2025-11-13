@@ -15,11 +15,11 @@
     const table = document.getElementById('resultsTable');
     if (!table) return;
 
-    const containerWidth = Math.min(container.offsetWidth, 1020);
+    const containerWidth = Math.min(container.offsetWidth, 1000);
 
-    const col3Width = 100;
+    const col3Width = 110;
     const col4Width = 65;
-    const maxCol1Col2 = 855;
+    const maxCol1Col2 = 825;
     const minCol1Width = 250;
     const maxCol1Width = 500;
 
