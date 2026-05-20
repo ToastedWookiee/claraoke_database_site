@@ -394,7 +394,6 @@ th.sorted-desc::after {
 }
 .list-thumbnail {
   vertical-align: middle;
-  clip-path: inset(6px 0 6px 0);
   border: 1px solid var(--color-600);
 }
 /* =========================

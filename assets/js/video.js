@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       videoTitle.textContent = data.video_info.TITLE || 'Unknown Title';
 
-      const thumbnail_url = `https://img.youtube.com/vi/${encodeURIComponent(videoID)}/mqdefault.jpg`;
-      videoThumbnail.innerHTML = `<img src="${thumbnail_url}" alt="Video Thumbnail" height="150px" width="200px" title="${data.video_info.TITLE || ''}" />`;
+      const thumbnail_url = `../assets/images/video_thumbnails/${encodeURIComponent(videoID)}.jpg`;
+      videoThumbnail.innerHTML = `<img src="${thumbnail_url}" alt="Video Thumbnail" width="200px" height="113px" title="${data.video_info.TITLE || ''}" />`;
 
       videoDate.textContent = data.date_aired || 'Unknown';
       videoSongsCount.textContent = data.karaoke_info.NUM || 0;

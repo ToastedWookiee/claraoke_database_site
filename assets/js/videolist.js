@@ -16,11 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const item of items) {
       const video_url = `../pages/video.html?videoID=${encodeURIComponent(item.VIDEOID)}`;
       const youtube_url = `https://www.youtube.com/watch?v=${encodeURIComponent(item.VIDEOID)}`;
-      const thumbnail_url = `https://img.youtube.com/vi/${encodeURIComponent(item.VIDEOID)}/default.jpg`;
+      const thumbnail_url = `../assets/images/video_thumbnails/${encodeURIComponent(item.VIDEOID)}.jpg`;
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td class="clickable-cell"><a href="${video_url}" class="full-link"><img class="list-thumbnail" src="${thumbnail_url}" alt="Thumbnail" title="${item.TITLE}" width="67px" height="51px" loading="lazy"></a></td>
+        <td class="clickable-cell"><a href="${video_url}" class="full-link"><img class="list-thumbnail" src="${thumbnail_url}" alt="Thumbnail" title="${item.TITLE}" width="67px" height="38px" loading="lazy"></a></td>
         <td class="clickable-cell" style="padding-left: 0.75rem; text-align: left;">
           <a href="${video_url}" target="_self" class="full-link">
             <span class="truncate" title="${item.TITLE}">
