@@ -70,9 +70,9 @@ $pdo = null;
                 if (!$track) {
                     echo $video_info['TITLE'];
                 } else {
-                    echo $song_info['TITLE'] ?>. " - " .<?= $song_info['ARTIST'];
-                                                    }
-                                                        ?>
+                    echo $song_info['TITLE'] . ' - ' . $song_info['ARTIST'];
+                }
+                ?>
             </h3>
             <div class="video-body">
                 <div class="video-thumb"><img src="../assets/images/video_thumbnails/<?= htmlspecialchars($video_id) ?>.jpg" alt="Video Thumbnail" width="200px" height="113px" title="<?= $video_info['TITLE'] ?>" /></div>
@@ -114,34 +114,28 @@ $pdo = null;
         const startTime = <?= $start_time ?>;
 
         player.ready(() => {
-            if (startTime > 0) {
-                player.one('loadedmetadata', () => {
+            player.one('loadedmetadata', () => {
+                if (startTime > 0) {
                     player.currentTime(startTime);
-                    player.play();
-                });
-            } else {
-                player.one('loadedmetadata', () => {
-                    player.play();
-                });
-            }
-        });
+                }
+                player.play();
 
-        player.on('loadedmetadata', () => {
-            const videoWidth = player.videoWidth();
-            const videoHeight = player.videoHeight();
-            const aspectRatio = videoHeight / videoWidth;
-            const container = document.querySelector('.player-container');
+                const videoWidth = player.videoWidth();
+                const videoHeight = player.videoHeight();
+                const aspectRatio = videoHeight / videoWidth;
+                const container = document.querySelector('.player-container');
 
-            const updateSize = () => {
-                const containerWidth = container.clientWidth;
-                const calculatedHeight = containerWidth * aspectRatio;
-                const maxHeight = window.innerHeight - 275;
-                container.style.height = `${Math.min(calculatedHeight, maxHeight)}px`;
-            };
+                const updateSize = () => {
+                    const containerWidth = container.clientWidth;
+                    const calculatedHeight = containerWidth * aspectRatio;
+                    const maxHeight = window.innerHeight - 275;
+                    container.style.height = `${Math.min(calculatedHeight, maxHeight)}px`;
+                };
 
-            new ResizeObserver(updateSize).observe(container);
-            window.addEventListener('resize', updateSize);
-            updateSize();
+                new ResizeObserver(updateSize).observe(container);
+                window.addEventListener('resize', updateSize);
+                updateSize();
+            });
         });
     </script>
 </body>
