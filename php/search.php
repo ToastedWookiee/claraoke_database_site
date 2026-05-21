@@ -62,7 +62,8 @@ if ($query !== '') {
         s.TITLE AS song,
         s.ARTIST AS artist,
         s.STARTTIME AS time,
-        s.START_SECONDS as start_seconds,
+        s.START_SECONDS AS start_seconds,
+        s.TRACK AS track,
         v.TITLE AS video,
         v.VIDEOID AS videoid,
         v.TIME AS date
@@ -91,17 +92,15 @@ if ($query !== '') {
         }
       }
 
-      // Format the song start time for use in youtube link
-      $timestamp = preg_replace("/(\d{2}):(\d{2}):(\d{2})/", "$1h$2m$3s", $row['time']);
-
       $results[] = [
         'song' => $row['song'],
         'artist' => $row['artist'],
         'video' => $row['video'] ?? 'Unknown',
         'videoid' => $row['videoid'],
         'date' => $date,
-        'link' => "https://www.youtube.com/watch?v={$row['videoid']}&t={$timestamp}",
+        'link' => "../php/watch.php?v={$row['videoid']}&track={$row['track']}&t={$row['start_seconds']}",
         'start_seconds' => $row['start_seconds'],
+        'track' => $row['track'],
       ];
     }
   } catch (PDOException $e) {

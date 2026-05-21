@@ -90,7 +90,7 @@
         <td class="col-song"><span class="truncate" title="${item.song} / ${item.artist}">${item.song} / ${item.artist}</span></td>
         <td class="col-video"><a href="../pages/video.html?videoID=${item.videoid}" target="_self" class="full-link" style="justify-content: left;"><span class="truncate" title="${item.video}">${item.video}</span></a></td>
         <td class="col-date">${item.date}</td>
-        <td class="col-link"><a href="${item.link}" class="full-link" target="_blank" rel="noopener">Link</a></td>
+        <td class="col-link"><a href="${item.link}" class="full-link" target="_self">Link</a></td>
       `;
 
       const expandableRow = document.createElement('tr');
@@ -99,7 +99,7 @@
         <td colspan="4">
           <div><strong>Stream:</strong> <a href="../pages/video.html?videoID=${item.videoid}" target="_self" class="link">${item.video}</a></div>
           <div><strong>Date:</strong> ${item.date}</div>
-          <div><strong>Song Link:</strong> <a href="${item.link}" target="_blank" rel="noopener" class="link">YouTube</a></div>
+          <div><strong>Song Link:</strong> <a href="${item.link}" target="_self" class="link">Watch</a></div>
         </td>
       `;
 

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (const item of items) {
       const video_url = `../pages/video.html?videoID=${encodeURIComponent(item.VIDEOID)}`;
-      const youtube_url = `https://www.youtube.com/watch?v=${encodeURIComponent(item.VIDEOID)}`;
+      const youtube_url = `../php/watch.php?v=${encodeURIComponent(item.VIDEOID)}`;
       const thumbnail_url = `../assets/images/video_thumbnails/${encodeURIComponent(item.VIDEOID)}.jpg`;
 
       const tr = document.createElement('tr');
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </td>
         <td style="text-align: center">${item.TIME}</td>
         <td style="text-align: center">${item.NUM}</td>
-        <td class="clickable-cell"><a href="${youtube_url}" target="_blank" rel="noopener" class="full-link" style="justify-content: center">Link</a></td>
+        <td class="clickable-cell"><a href="${youtube_url}" target="_self" class="full-link" style="justify-content: center">Link</a></td>
       `;
       tbody.appendChild(tr);
     }

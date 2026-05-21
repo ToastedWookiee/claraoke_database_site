@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       videoDate.textContent = data.date_aired || 'Unknown';
       videoSongsCount.textContent = data.karaoke_info.NUM || 0;
-      videoLink.href = `https://www.youtube.com/watch?v=${encodeURIComponent(videoID)}`;
+      videoLink.href = `../php/watch.php?v=${encodeURIComponent(videoID)}`;
 
       songListBody.innerHTML = ''; // Clear existing rows
       if (data.songs && data.songs.length > 0) {
@@ -47,13 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
             '$1h$2m$3s'
           );
 
-          const song_link = `https://www.youtube.com/watch?v=${encodeURIComponent(videoID)}&t=${encodeURIComponent(timestamp)}`;
+          const song_link = `../php/watch.php?v=${encodeURIComponent(videoID)}&track=${song.TRACK}&t=${encodeURIComponent(song.START_SECONDS)}`;
 
           const row = document.createElement('tr');
           row.innerHTML = `
                         <td><span class="truncate" title="${song.TITLE || ''}">${song.TITLE || 'Unknown Title'}</span></td>
                         <td><span class="truncate" title="${song.ARTIST || ''}" style="min-width: 300px">${song.ARTIST || 'Unknown Artist'}</span></td>
-                        <td class="clickable-cell"><a href="${song_link}" class="full-link" target="_blank" rel="noopener">Link</a></td>
+                        <td class="clickable-cell"><a href="${song_link}" class="full-link" target="_self">Link</a></td>
                     `;
           songListBody.appendChild(row);
         });
