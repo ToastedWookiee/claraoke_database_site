@@ -81,19 +81,19 @@ $pdo = null;
                         <?php if (!$track): ?>
                             <strong>Date Aired:</strong> <?= $date_aired ?><br />
                             <strong># of Songs:</strong> <?= $karaoke_info['NUM'] ?><br />
-                            <strong>Video Link:</strong>
+                            <strong>Video Info:</strong>
                             <a
                                 href="../pages/video.html?videoID=<?= htmlspecialchars($video_id) ?>"
                                 class="video-link"
-                                target="_self">Song List</a>
+                                target="_self">Linkt</a>
                         <?php else: ?>
                             <strong>Video Title:</strong> <?= $video_info['TITLE'] ?><br />
                             <strong>Date Aired:</strong> <?= $date_aired ?><br />
-                            <strong>Video Link:</strong>
+                            <strong>Video Info:</strong>
                             <a
                                 href="../pages/video.html?videoID=<?= htmlspecialchars($video_id) ?>"
                                 class="video-link"
-                                target="_self">Song List</a>
+                                target="_self">Link</a>
                         <?php endif; ?>
                     </p>
                 </div>

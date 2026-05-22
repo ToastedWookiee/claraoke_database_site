@@ -90,7 +90,7 @@
         <td class="col-song"><span class="truncate" title="${item.song} / ${item.artist}">${item.song} / ${item.artist}</span></td>
         <td class="col-video"><a href="../pages/video.html?videoID=${item.videoid}" target="_self" class="full-link" style="justify-content: left;"><span class="truncate" title="${item.video}">${item.video}</span></a></td>
         <td class="col-date">${item.date}</td>
-        <td class="col-link"><a href="${item.link}" class="full-link" target="_self">Link</a></td>
+        <td class="col-link"><a href="${item.link}" class="full-link" target="_self">Watch</a></td>
       `;
 
       const expandableRow = document.createElement('tr');

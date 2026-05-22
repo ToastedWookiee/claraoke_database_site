@@ -69,7 +69,8 @@ if ($query !== '') {
         v.TIME AS date
       FROM songs AS s
       LEFT JOIN videos AS v ON s.VIDEOID = v.VIDEOID
-      WHERE MATCH(s.TITLE, s.ARTIST) AGAINST (? IN BOOLEAN MODE);
+      WHERE MATCH(s.TITLE, s.ARTIST) AGAINST (? IN BOOLEAN MODE)
+      ORDER BY v.TIME DESC;
   ";
 
   try {

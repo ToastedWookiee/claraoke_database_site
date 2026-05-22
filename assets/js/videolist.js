@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </td>
         <td style="text-align: center">${item.TIME}</td>
         <td style="text-align: center">${item.NUM}</td>
-        <td class="clickable-cell"><a href="${youtube_url}" target="_self" class="full-link" style="justify-content: center">Link</a></td>
+        <td class="clickable-cell"><a href="${youtube_url}" target="_self" class="full-link" style="justify-content: center">Watch</a></td>
       `;
       tbody.appendChild(tr);
     }
