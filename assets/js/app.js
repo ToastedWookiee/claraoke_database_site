@@ -9,6 +9,8 @@
   const menuToggle = document.querySelector('.menu-toggle');
   const sidebar = document.getElementById('sidebar');
 
+  const history = [];
+
   window.hideIframeLoader = function () {
     if (wrapper) wrapper.classList.remove('loading');
     if (loader) loader.setAttribute('aria-hidden', 'true');
@@ -19,8 +21,37 @@
     if (loader) loader.setAttribute('aria-hidden', 'false');
   }
 
+  function updateBackButton() {
+    const backBtn = document.getElementById('back-btn');
+    if (backBtn) {
+      backBtn.style.display = history.length > 1 ? 'inline-flex' : 'none';
+    }
+  }
+
+  window.goBack = function () {
+    if (history.length > 1) {
+      history.pop();
+      mainframe.src = history[history.length - 1];
+      updateBackButton();
+    }
+  };
+
   // Show loader when navigating via sidebar links
   mainframe.addEventListener('load', () => {
+    // Track navigation using the actual iframe URL, not mainframe.src
+    let currentUrl;
+    try {
+      currentUrl = mainframe.contentWindow.location.href;
+    } catch (err) {
+      currentUrl = mainframe.src;
+    }
+
+    if (history.length === 0 || history[history.length - 1] !== currentUrl) {
+      history.push(currentUrl);
+      console.log('History updated:', history);
+      updateBackButton();
+    }
+
     let path;
     try {
       const url = new URL(mainframe.contentWindow.location.href);
@@ -37,6 +68,7 @@
     // Set active only if a matching nav link exists
     const matchedLink = Array.from(navLinks).find((a) => {
       const linkPath = a.getAttribute('href') || a.dataset.page;
+      if (!linkPath) return false; // skip elements with no href or data-page
       // Strip folder from nav link href as well
       const linkFilename = linkPath.split('/').pop();
       return linkFilename === path;
