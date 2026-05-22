@@ -85,7 +85,9 @@ $pdo = null;
                             <a
                                 href="../pages/video.html?videoID=<?= htmlspecialchars($video_id) ?>"
                                 class="video-link"
-                                target="_self">Linkt</a>
+                                target="_self">Linkt</a><br />
+                            <strong>Description:</strong>
+                            <a id="desc-link" href="#" class="desc-link" target="_self">View Description</a>
                         <?php else: ?>
                             <strong>Video Title:</strong> <?= $video_info['TITLE'] ?><br />
                             <strong>Date Aired:</strong> <?= $date_aired ?><br />
@@ -93,7 +95,9 @@ $pdo = null;
                             <a
                                 href="../pages/video.html?videoID=<?= htmlspecialchars($video_id) ?>"
                                 class="video-link"
-                                target="_self">Link</a>
+                                target="_self">Link</a><br />
+                            <strong>Description:</strong>
+                            <a id="desc-link" href="#" class="desc-link" target="_self">View Description</a>
                         <?php endif; ?>
                     </p>
                 </div>
@@ -105,9 +109,19 @@ $pdo = null;
             </video>
         </div>
     </div>
-
+    <div id="description-modal" style="display: none">
+        <div id="description-overlay"></div>
+        <div id="description-box">
+            <div id="description-header">
+                <strong>Video Description</strong>
+                <button id="description-close">✕</button>
+            </div>
+            <div id="description-body"></div>
+        </div>
+    </div>
 
     <script>
+        const descLink = document.getElementById('desc-link');
         const player = videojs('player', {
             fill: true,
         });
@@ -137,6 +151,27 @@ $pdo = null;
                 updateSize();
             });
         });
+
+        descLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const res = await fetch(`../php/description.php?videoID=<?= htmlspecialchars($video_id) ?>`);
+            const data = await res.json();
+            document.getElementById('description-body').textContent =
+                data.description || 'No description available.';
+            document.getElementById('description-modal').style.display = 'block';
+        });
+
+        // Close modal
+        document
+            .getElementById('description-close')
+            .addEventListener('click', () => {
+                document.getElementById('description-modal').style.display = 'none';
+            });
+        document
+            .getElementById('description-overlay')
+            .addEventListener('click', () => {
+                document.getElementById('description-modal').style.display = 'none';
+            });
     </script>
 </body>
 

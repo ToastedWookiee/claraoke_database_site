@@ -17,12 +17,12 @@
               <strong># of Songs:</strong> <span id="video-songs-count"></span
               ><br />
               <strong>Video Link:</strong>
-              <a
-                id="video-link"
-                href="#"
-                class="video-link"
-                target="_self"
+              <a id="video-link" href="#" class="video-link" target="_self"
                 >Watch Video</a
+              ><br />
+              <strong>Description:</strong>
+              <a id="desc-link" href="#" class="desc-link" target="_self"
+                >View Description</a
               >
             </p>
           </div>
@@ -46,5 +46,15 @@
       </div>
     </div>
     <script src="../assets/js/video.js"></script>
+    <div id="description-modal" style="display: none">
+      <div id="description-overlay"></div>
+      <div id="description-box">
+        <div id="description-header">
+          <strong>Video Description</strong>
+          <button id="description-close">✕</button>
+        </div>
+        <div id="description-body"></div>
+      </div>
+    </div>
   </body>
 </html>

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const videoLink = document.getElementById('video-link');
   const songListBody = document.getElementById('song-list-body');
   const tableContainer = document.getElementsByClassName('table-container')[0];
+  const descLink = document.getElementById('desc-link');
 
   const urlParams = new URLSearchParams(window.location.search);
   const videoID = urlParams.get('videoID');
@@ -38,6 +39,27 @@ document.addEventListener('DOMContentLoaded', () => {
       videoDate.textContent = data.date_aired || 'Unknown';
       videoSongsCount.textContent = data.karaoke_info.NUM || 0;
       videoLink.href = `../php/watch.php?v=${encodeURIComponent(videoID)}`;
+
+      descLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const res = await fetch(`../php/description.php?videoID=${videoID}`);
+        const data = await res.json();
+        document.getElementById('description-body').textContent =
+          data.description || 'No description available.';
+        document.getElementById('description-modal').style.display = 'block';
+      });
+
+      // Close modal
+      document
+        .getElementById('description-close')
+        .addEventListener('click', () => {
+          document.getElementById('description-modal').style.display = 'none';
+        });
+      document
+        .getElementById('description-overlay')
+        .addEventListener('click', () => {
+          document.getElementById('description-modal').style.display = 'none';
+        });
 
       songListBody.innerHTML = ''; // Clear existing rows
       if (data.songs && data.songs.length > 0) {
