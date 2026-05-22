@@ -105,11 +105,10 @@ $pdo = null;
         </div>
         <div class="table-container player-container" style="max-height: calc(100vh - 275px)">
             <video id="player" class="video-js vjs-default-skin" controls preload="auto">
-                <source src="https://hls.claraoke-db.com/<?= htmlspecialchars($video_id) ?>/master.m3u8" type="application/x-mpegURL">
             </video>
         </div>
     </div>
-    <div id="description-modal" style="display: none">
+    <div id="description-modal">
         <div id="description-overlay"></div>
         <div id="description-box">
             <div id="description-header">
@@ -122,33 +121,41 @@ $pdo = null;
 
     <script>
         const descLink = document.getElementById('desc-link');
-        const player = videojs('player', {
-            fill: true,
-        });
-        const startTime = <?= $start_time ?>;
 
-        player.ready(() => {
-            player.one('loadedmetadata', () => {
-                if (startTime > 0) {
-                    player.currentTime(startTime);
-                }
-                player.play();
+        window.addEventListener('load', () => {
+            const player = videojs('player', {
+                fill: true,
+            });
+            const startTime = <?= $start_time ?>;
 
-                const videoWidth = player.videoWidth();
-                const videoHeight = player.videoHeight();
-                const aspectRatio = videoHeight / videoWidth;
-                const container = document.querySelector('.player-container');
+            player.src({
+                src: `https://hls.claraoke-db.com/<?= htmlspecialchars($video_id) ?>/master.m3u8`,
+                type: 'application/x-mpegURL'
+            });
 
-                const updateSize = () => {
-                    const containerWidth = container.clientWidth;
-                    const calculatedHeight = containerWidth * aspectRatio;
-                    const maxHeight = window.innerHeight - 275;
-                    container.style.height = `${Math.min(calculatedHeight, maxHeight)}px`;
-                };
+            player.ready(() => {
+                player.one('loadedmetadata', () => {
+                    if (startTime > 0) {
+                        player.currentTime(startTime);
+                    }
+                    player.play();
 
-                new ResizeObserver(updateSize).observe(container);
-                window.addEventListener('resize', updateSize);
-                updateSize();
+                    const videoWidth = player.videoWidth();
+                    const videoHeight = player.videoHeight();
+                    const aspectRatio = videoHeight / videoWidth;
+                    const container = document.querySelector('.player-container');
+
+                    const updateSize = () => {
+                        const containerWidth = container.clientWidth;
+                        const calculatedHeight = containerWidth * aspectRatio;
+                        const maxHeight = window.innerHeight - 275;
+                        container.style.height = `${Math.min(calculatedHeight, maxHeight)}px`;
+                    };
+
+                    new ResizeObserver(updateSize).observe(container);
+                    window.addEventListener('resize', updateSize);
+                    updateSize();
+                });
             });
         });
 
@@ -158,19 +165,19 @@ $pdo = null;
             const data = await res.json();
             document.getElementById('description-body').textContent =
                 data.description || 'No description available.';
-            document.getElementById('description-modal').style.display = 'block';
+            document.getElementById('description-modal').classList.add('is-visible');
         });
 
         // Close modal
         document
             .getElementById('description-close')
             .addEventListener('click', () => {
-                document.getElementById('description-modal').style.display = 'none';
+                document.getElementById('description-modal').classList.remove('is-visible');
             });
         document
             .getElementById('description-overlay')
             .addEventListener('click', () => {
-                document.getElementById('description-modal').style.display = 'none';
+                document.getElementById('description-modal').classList.remove('is-visible');
             });
     </script>
 </body>
