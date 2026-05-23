@@ -22,6 +22,7 @@
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
+  --space-5: 1.25rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
 
@@ -34,11 +35,12 @@
 * {
   box-sizing: border-box;
 }
-html,
-body {
+html {
   height: 100%;
 }
 body {
+  height: 100vh;
+  overflow: hidden;
   margin: 0;
   font-family:
     system-ui,
@@ -49,11 +51,17 @@ body {
     sans-serif;
   color: var(--text-100);
   background: var(--color-300);
+  display: flex;
+  flex-direction: column;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+a:not([href]) {
+  cursor: pointer;
 }
 
 .link {
@@ -124,21 +132,20 @@ a {
    Layout
    ========================= */
 .layout {
-  display: grid;
-  grid-template-columns: 275px 1fr;
   gap: var(--space-6);
   max-width: var(--maxw);
-  margin: var(--space-6) auto;
-  padding: 0 var(--space-6);
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* =========================
    Sidebar
    ========================= */
 .sidebar {
-  position: sticky;
-  top: 84px;
-  align-self: start;
   background: var(--color-200);
   border: 1px solid var(--color-600);
   border-radius: var(--radius-md);
@@ -147,6 +154,9 @@ a {
   flex-direction: column;
   gap: var(--space-4);
   min-height: 50vh;
+  min-width: 275px;
+  overflow-y: auto;
+  align-self: start;
 }
 
 .nav {
@@ -192,37 +202,15 @@ a {
   font-family: 'Consolas', 'Courier New', monospace;
 }
 
-/* Back button in sidebar */
-.nav #back-btn {
-  display: none;
-  width: 100%;
-  padding: 0.7rem 0.85rem;
-  border: 1px solid transparent;
-  border-bottom: 1px dashed var(--color-600);
-  background: transparent;
-  cursor: pointer;
-  text-align: left;
-  color: var(--text-100);
-  font-size: 0.9rem;
-  font-family: inherit;
-  border-radius: var(--radius-md);
-  transition:
-    background 0.18s ease,
-    color 0.18s ease;
-}
-
-.nav #back-btn:hover {
-  background: var(--color-500);
-  color: var(--accent-yellow);
-  border: 1px solid var(--accent-yellow);
-}
-
 /* =========================
-   Main (iframe) area
+   Main area
    ========================= */
 .main {
-  min-height: 60vh;
-  padding-bottom: var(--space-4);
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-title {
@@ -231,47 +219,41 @@ a {
   color: black;
 }
 
-/* =========================
-   Iframe Loading Overlay
-   ========================= */
-.iframe-wrap {
+.main-wrap {
   position: relative;
-  background: var(--color-200);
   border: 1px solid var(--color-600);
   border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.iframe-wrap iframe,
-#mainframe {
+  overflow-y: auto;
+  min-height: 0; /* critical in flex/grid children — lets it shrink below content size */
+  flex: 1; /* grow to fill remaining space in .layout */
   width: 100%;
-  height: 70vh;
-  border: 0;
-  display: block;
-  background: var(--color-300);
-  color: var(--text-100);
-}
-
-/* overlay covers iframe until it's ready */
-.iframe-loading {
-  position: absolute;
-  inset: 0; /* top:0; right:0; bottom:0; left:0; shorthand */
-  background: rgba(10, 23, 106, 0.8); /* semi-transparent background */
-  color: var(--accent-yellow);
-  font-size: 1.1rem;
-  font-weight: 500;
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--color-200);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 5;
-  transition: opacity 0.25s ease;
-  opacity: 0;
-  pointer-events: none;
+  flex-direction: column;
 }
 
-.iframe-loading.is-active {
-  opacity: 1;
-  pointer-events: all;
+.main-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+  /* optional fade on page load */
+  transition: opacity 0.15s ease;
+}
+
+#main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Forces children like #player-wrap to expand fully */
+  width: 100%;
+}
+
+.main-content.is-loading {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .content-wrap {
@@ -283,7 +265,6 @@ a {
    Footer
    ========================= */
 .site-footer {
-  margin-top: var(--space-8);
   background: var(--color-200);
   border-top: 1px solid var(--color-600);
   padding: var(--space-4);
@@ -427,7 +408,7 @@ th.sorted-desc::after {
 @media (max-width: 960px) {
   .layout {
     grid-template-columns: 1fr;
-    padding: 0 var(--space-4);
+    padding: var(--space-6);
   }
   .menu-toggle {
     display: inline-block;
@@ -439,10 +420,6 @@ th.sorted-desc::after {
   }
   .sidebar.is-open {
     display: block;
-  }
-  .iframe-wrap iframe,
-  #mainframe {
-    height: 65vh;
   }
 }
 
@@ -513,7 +490,7 @@ th.sorted-desc::after {
 .video-item {
   display: flex;
   flex-direction: column; /* title on top */
-  background: var(--color-200);
+  background: var(--color-300);
   border: 1px solid var(--color-600);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow);
@@ -524,6 +501,7 @@ th.sorted-desc::after {
 
 .video-title {
   width: 100%;
+  min-width: 100%;
   margin: 0 0 10px 0;
   height: 1em;
   line-height: 1;
@@ -558,11 +536,13 @@ th.sorted-desc::after {
   object-fit: cover;
 }
 
-.video-link .desc-link {
+.video-link,
+.desc-link {
   text-decoration: none;
 }
 
-.video-link:hover .desc-link:hover {
+.video-link:hover,
+.desc-link:hover {
   text-decoration: underline;
 }
 
@@ -628,10 +608,10 @@ th.sorted-desc::after {
 }
 
 #description-modal {
-    display: none;
+  display: none;
 }
 #description-modal.is-visible {
-    display: block;
+  display: block;
 }
 
 /* =========================
@@ -780,18 +760,31 @@ th.sorted-desc::after {
 /* =========================
    Video Player
    ========================= */
-.table-container.player-container {
-  overflow: hidden;
+#player-wrap {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #000;
-  height: calc(100vh - 275px);
-  border: none;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-width: 100%; /* Completely disables max-content shrink-wrapping */
+  align-self: stretch; /* Forces it to match the parent's width */
 }
 
-.table-container.player-container .video-js {
-  width: 100%;
-  height: 100%;
-  max-height: calc(100vh - 275px);
+.player-header {
+  display: flex;
+  flex-direction: column; /* title on top */
+  background: var(--color-300);
+  border: 1px solid var(--color-600);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 10px;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.player-container {
+  min-width: 100%; /* Provides a hard boundary for Video.js to fill */
+  max-width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #000;
 }

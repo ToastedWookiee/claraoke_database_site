@@ -104,24 +104,12 @@
       <!-- Sidebar -->
       <aside id="sidebar" class="sidebar" role="navigation">
         <nav class="nav">
-          <button id="back-btn" class="nav__link" onclick="goBack()">
-            ← Back
-          </button>
-          <a
-            class="nav__link is-active"
-            href="pages/home.html"
-            target="mainframe"
-            >Home</a
-          >
-          <a class="nav__link" href="pages/search.html" target="mainframe"
-            >Search</a
-          >
-          <a class="nav__link" href="pages/videolist.html" target="mainframe"
+          <a class="nav__link is-active" href="/home" data-page="home">Home</a>
+          <a class="nav__link" href="/search" data-page="search">Search</a>
+          <a class="nav__link" href="/videolist" data-page="videolist"
             >Video List</a
           >
-          <a class="nav__link" href="pages/about.html" target="mainframe"
-            >About</a
-          >
+          <a class="nav__link" href="/about" data-page="about">About</a>
           <!-- Add more links here; all load in iframe -->
         </nav>
         <div class="sidebar__footer">
@@ -175,23 +163,14 @@
             fetchUpdateTime();
           </script>
 
-          <small>Site v1.3.2</small>
+          <small>Site v1.4.0</small>
         </div>
       </aside>
 
-      <!-- Main content (iframe) -->
+      <!-- Main content -->
       <main class="main">
-        <div class="iframe-wrap">
-          <div class="iframe-loading" id="iframeLoading" aria-hidden="true">
-            Loading…
-          </div>
-          <iframe
-            name="mainframe"
-            id="mainframe"
-            title="Content"
-            src="pages/home.html"
-            loading="lazy"
-            onload="hideIframeLoader()"></iframe>
+        <div id="main-wrap" class="main-wrap">
+          <div id="main-content" class="main-content"></div>
         </div>
       </main>
     </div>

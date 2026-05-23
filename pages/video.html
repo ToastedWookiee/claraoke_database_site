@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <title>Video</title>
-    <link rel="stylesheet" href="../assets/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="assets/css/style.css" type="text/css" />
   </head>
-  <body style="padding: 1.25rem">
+  <body>
     <div id="video-container">
       <div class="video-item">
         <h3 id="video-title" class="video-title"></h3>
@@ -17,18 +17,14 @@
               <strong># of Songs:</strong> <span id="video-songs-count"></span
               ><br />
               <strong>Video Link:</strong>
-              <a id="video-link" href="#" class="video-link" target="_self"
-                >Watch Video</a
-              ><br />
+              <a id="video-link" class="video-link">Watch Video</a><br />
               <strong>Description:</strong>
-              <a id="desc-link" href="#" class="desc-link" target="_self"
-                >View Description</a
-              >
+              <a id="desc-link" class="desc-link">View Description</a>
             </p>
           </div>
         </div>
       </div>
-      <div class="table-container" style="max-height: calc(100vh - 275px)">
+      <div class="table-container" style="max-height: calc(100vh - 576px)">
         <div class="song-list">
           <table class="table table--search">
             <thead>
@@ -45,7 +41,7 @@
         </div>
       </div>
     </div>
-    <script src="../assets/js/video.js"></script>
+    <script src="assets/js/video.js"></script>
     <div id="description-modal" style="display: none">
       <div id="description-overlay"></div>
       <div id="description-box">

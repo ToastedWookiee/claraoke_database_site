@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+(function () {
   const table = document.getElementById('videoTable');
   const tbody = document.getElementById('videolist');
 
@@ -14,15 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     for (const item of items) {
-      const video_url = `../pages/video.html?videoID=${encodeURIComponent(item.VIDEOID)}`;
-      const youtube_url = `../php/watch.php?v=${encodeURIComponent(item.VIDEOID)}`;
-      const thumbnail_url = `../assets/images/video_thumbnails/${encodeURIComponent(item.VIDEOID)}.jpg`;
+      const thumbnail_url = `assets/images/video_thumbnails/${encodeURIComponent(item.VIDEOID)}.jpg`;
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td class="clickable-cell"><a href="${video_url}" class="full-link"><img class="list-thumbnail" src="${thumbnail_url}" alt="Thumbnail" title="${item.TITLE}" width="67px" height="38px" loading="lazy"></a></td>
+        <td class="clickable-cell"><a class="full-link" onclick="navigateTo('video', {v: '${item.VIDEOID}'})"><img class="list-thumbnail" src="${thumbnail_url}" alt="Thumbnail" title="${item.TITLE}" width="67px" height="38px" loading="lazy"></a></td>
         <td class="clickable-cell" style="padding-left: 0.75rem; text-align: left;">
-          <a href="${video_url}" target="_self" class="full-link">
+          <a class="full-link" onclick="navigateTo('video', {v: '${item.VIDEOID}'})">
             <span class="truncate" title="${item.TITLE}">
               ${item.TITLE}
             </span>
@@ -30,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </td>
         <td style="text-align: center">${item.TIME}</td>
         <td style="text-align: center">${item.NUM}</td>
-        <td class="clickable-cell"><a href="${youtube_url}" target="_self" class="full-link" style="justify-content: center">Watch</a></td>
+        <td class="clickable-cell"><a class="full-link" onclick="navigateTo('watch', {v: '${item.VIDEOID}'})" style="justify-content: center">Watch</a></td>
       `;
       tbody.appendChild(tr);
     }
@@ -38,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadVideos() {
     try {
-      const res = await fetch('../php/videolist.php', { cache: 'no-store' });
+      const res = await fetch('php/videolist.php', { cache: 'no-store' });
       if (!res.ok) throw new Error('Network error');
       const data = await res.json();
       renderRows(data.items || []);
@@ -46,8 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
       tbody.innerHTML = `<tr><td colspan="5">Error loading video list: ${err.message}</td></tr>`;
     }
   }
-
-  loadVideos();
 
   // ========================
   // Sorting logic
@@ -107,4 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-});
+
+  loadVideos();
+})();

@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+(function () {
   const videoContainer = document.getElementById('video-container');
   const videoTitle = document.getElementById('video-title');
   const videoThumbnail = document.getElementById('video-thumbnail');
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const descLink = document.getElementById('desc-link');
 
   const urlParams = new URLSearchParams(window.location.search);
-  const videoID = urlParams.get('videoID');
+  const videoID = urlParams.get('v');
 
   if (!videoID) {
     videoContainer.innerHTML = '<h2>No videoID provided</h2>';
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadVideo() {
     try {
-      const res = await fetch(`../php/video.php?videoID=${videoID}`, {
+      const res = await fetch(`php/video.php?videoID=${videoID}`, {
         cache: 'no-store',
       });
       if (!res.ok) {
@@ -33,16 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       videoTitle.textContent = data.video_info.TITLE || 'Unknown Title';
 
-      const thumbnail_url = `../assets/images/video_thumbnails/${encodeURIComponent(videoID)}.jpg`;
+      const thumbnail_url = `assets/images/video_thumbnails/${encodeURIComponent(videoID)}.jpg`;
       videoThumbnail.innerHTML = `<img src="${thumbnail_url}" alt="Video Thumbnail" width="200px" height="113px" title="${data.video_info.TITLE || ''}" />`;
 
       videoDate.textContent = data.date_aired || 'Unknown';
       videoSongsCount.textContent = data.karaoke_info.NUM || 0;
-      videoLink.href = `../php/watch.php?v=${encodeURIComponent(videoID)}`;
+      videoLink.onclick = () => navigateTo('watch', { v: videoID });
 
       descLink.addEventListener('click', async (e) => {
         e.preventDefault();
-        const res = await fetch(`../php/description.php?videoID=${videoID}`);
+        const res = await fetch(`php/description.php?videoID=${videoID}`);
         const data = await res.json();
         document.getElementById('description-body').textContent =
           data.description || 'No description available.';
@@ -69,13 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
             '$1h$2m$3s'
           );
 
-          const song_link = `../php/watch.php?v=${encodeURIComponent(videoID)}&track=${song.TRACK}&t=${encodeURIComponent(song.START_SECONDS)}`;
-
           const row = document.createElement('tr');
           row.innerHTML = `
                         <td><span class="truncate" title="${song.TITLE || ''}">${song.TITLE || 'Unknown Title'}</span></td>
                         <td><span class="truncate" title="${song.ARTIST || ''}" style="min-width: 300px">${song.ARTIST || 'Unknown Artist'}</span></td>
-                        <td class="clickable-cell"><a href="${song_link}" class="full-link" target="_self">Watch</a></td>
+                        <td class="clickable-cell"><a class="full-link" onclick="navigateTo('watch', {v: '${videoID}', track: '${song.TRACK}', t: '${song.START_SECONDS}'})">Watch</a></td>
                     `;
           songListBody.appendChild(row);
         });
@@ -95,4 +93,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   loadVideo();
-});
+})();

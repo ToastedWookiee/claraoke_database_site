@@ -99,7 +99,6 @@ if ($query !== '') {
         'video' => $row['video'] ?? 'Unknown',
         'videoid' => $row['videoid'],
         'date' => $date,
-        'link' => "../php/watch.php?v={$row['videoid']}&track={$row['track']}&t={$row['start_seconds']}",
         'start_seconds' => $row['start_seconds'],
         'track' => $row['track'],
       ];

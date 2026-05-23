@@ -1,110 +1,198 @@
 (function () {
-  const yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  // ─── Page map: clean URL slug → HTML file path ──────────────────────────
+  const PAGE_MAP = {
+    home: 'pages/home.html',
+    search: 'pages/search.html',
+    videolist: 'pages/videolist.html',
+    about: 'pages/about.html',
+    video: 'pages/video.html',
+    watch: 'php/watch.php',
+  };
+  const DEFAULT_PAGE = 'home';
 
-  const mainframe = document.getElementById('mainframe');
-  const wrapper = document.querySelector('.iframe-wrap');
-  const loader = document.getElementById('iframeLoading');
-  const navLinks = document.querySelectorAll('.nav__link');
+  // ─── Element refs ────────────────────────────────────────────────────────
+  const yearEl = document.getElementById('year');
+  const content = document.getElementById('main-content');
+  const navLinks = document.querySelectorAll('.nav__link[data-page]');
   const menuToggle = document.querySelector('.menu-toggle');
   const sidebar = document.getElementById('sidebar');
 
-  const history = [];
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  window.hideIframeLoader = function () {
-    if (wrapper) wrapper.classList.remove('loading');
-    if (loader) loader.setAttribute('aria-hidden', 'true');
-  };
-
-  function showIframeLoader() {
-    if (wrapper) wrapper.classList.add('loading');
-    if (loader) loader.setAttribute('aria-hidden', 'false');
+  function remToPx(rem) {
+    // Get the actual font size of the root element (html)
+    const rootFontSize = parseFloat(
+      getComputedStyle(document.documentElement).fontSize
+    );
+    return rem * rootFontSize;
   }
 
-  function updateBackButton() {
-    const backBtn = document.getElementById('back-btn');
-    if (backBtn) {
-      backBtn.style.display = history.length > 1 ? 'inline-flex' : 'none';
+  // Set content area width
+  function setContentWidth() {
+    const browserWidth = window.innerWidth;
+    const sidebarWidth = sidebar ? sidebar.offsetWidth : 0;
+    const maxWidth = 1400;
+    const gapWidth = remToPx(1.5);
+    const padding = 2 * remToPx(1.5);
+    const mainWrap = document.querySelector('.main-wrap');
+    const content = document.getElementById('main-content');
+    if (!mainWrap || !content) return;
+
+    const layoutWidth = Math.min(browserWidth, maxWidth);
+    const width = layoutWidth - sidebarWidth - gapWidth - padding;
+    const contentWidth = width - 42; // border (2px) + padding (40px)
+
+    mainWrap.style.width = width + 'px';
+    content.style.width = contentWidth + 'px';
+  }
+  // Inject <head> assets, return a promise that resolves when all external scripts are loaded
+  function injectHeadAssets(doc) {
+    const promises = [];
+
+    doc.head
+      .querySelectorAll('link[rel="stylesheet"], script[src]')
+      .forEach((el) => {
+        const attr = el.tagName === 'LINK' ? 'href' : 'src';
+        const val = el.getAttribute(attr);
+        const abs = new URL(val, document.baseURI).href;
+
+        const already = [...document.querySelectorAll(`[${attr}]`)].some(
+          (existing) =>
+            new URL(existing.getAttribute(attr), document.baseURI).href === abs
+        );
+
+        if (already) return;
+
+        const clone = document.createElement(el.tagName);
+        [...el.attributes].forEach((a) => clone.setAttribute(a.name, a.value));
+
+        // For scripts, wait for them to load before resolving
+        if (el.tagName === 'SCRIPT') {
+          promises.push(
+            new Promise((resolve, reject) => {
+              clone.onload = resolve;
+              clone.onerror = reject;
+            })
+          );
+        }
+
+        document.head.appendChild(clone);
+      });
+
+    return Promise.all(promises);
+  }
+
+  // ─── Fetch an HTML file and inject its <body> into #main-content ─────────
+  async function loadPage(filePath) {
+    // Destroy any videojs instance before wiping the DOM
+    if (window.videojs) {
+      const existingPlayer = videojs.getPlayer('player');
+      if (existingPlayer) existingPlayer.dispose();
+    }
+
+    content.classList.add('is-loading');
+
+    try {
+      const res = await fetch(filePath);
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+
+      // Wait for any new head scripts to finish loading before continuing
+      await injectHeadAssets(doc);
+
+      content.innerHTML = doc.body.innerHTML;
+
+      // Now safe to re-run body scripts — dependencies are ready
+      content.querySelectorAll('script').forEach((oldScript) => {
+        const newScript = document.createElement('script');
+        [...oldScript.attributes].forEach((attr) =>
+          newScript.setAttribute(attr.name, attr.value)
+        );
+        if (oldScript.getAttribute('src')) {
+          newScript.src =
+            oldScript.getAttribute('src').split('?')[0] + '?t=' + Date.now();
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        oldScript.replaceWith(newScript);
+      });
+
+      setContentWidth();
+    } catch (err) {
+      content.innerHTML = `<p class="load-error">Failed to load page. Please try again.</p>`;
+      console.error('Page load error:', err);
+    } finally {
+      content.classList.remove('is-loading');
     }
   }
 
-  window.goBack = function () {
-    if (history.length > 1) {
-      history.pop();
-      mainframe.src = history[history.length - 1];
-      updateBackButton();
-    }
+  // ─── Navigate: push URL + load matching page ─────────────────────────────
+  window.navigateTo = function (page, params = {}) {
+    if (!PAGE_MAP[page]) page = DEFAULT_PAGE;
+
+    const qs = new URLSearchParams(params).toString();
+    const filePath = PAGE_MAP[page] + (qs ? '?' + qs : '');
+    const cleanUrl = '/' + page + (qs ? '?' + qs : '');
+
+    window.history.pushState({ page, params }, '', cleanUrl);
+    updateActiveNav(page);
+    loadPage(filePath);
   };
 
-  // Show loader when navigating via sidebar links
-  mainframe.addEventListener('load', () => {
-    // Track navigation using the actual iframe URL, not mainframe.src
-    let currentUrl;
-    try {
-      currentUrl = mainframe.contentWindow.location.href;
-    } catch (err) {
-      currentUrl = mainframe.src;
-    }
+  // ─── Read current URL and load the right page (initial load + popstate) ──
+  function loadFromUrl() {
+    const slug = window.location.pathname.replace(/^\//, '') || DEFAULT_PAGE;
+    const page = PAGE_MAP[slug] ? slug : DEFAULT_PAGE;
+    const params = Object.fromEntries(
+      new URLSearchParams(window.location.search)
+    );
 
-    if (history.length === 0 || history[history.length - 1] !== currentUrl) {
-      history.push(currentUrl);
-      console.log('History updated:', history);
-      updateBackButton();
-    }
+    const qs = new URLSearchParams(params).toString();
+    const filePath = PAGE_MAP[page] + (qs ? '?' + qs : '');
 
-    let path;
-    try {
-      const url = new URL(mainframe.contentWindow.location.href);
-      // Get only the filename (strip folder)
-      path = url.pathname.split('/').pop();
-    } catch (err) {
-      console.warn('Cannot read iframe URL:', err);
-      return;
-    }
+    updateActiveNav(page);
+    loadPage(filePath);
+  }
 
-    // Remove 'is-active' from all links
-    navLinks.forEach((a) => a.classList.remove('is-active'));
+  // ─── Highlight the matching nav link ─────────────────────────────────────
+  function updateActiveNav(page) {
+    navLinks.forEach((link) =>
+      link.classList.toggle('is-active', link.dataset.page === page)
+    );
+  }
 
-    // Set active only if a matching nav link exists
-    const matchedLink = Array.from(navLinks).find((a) => {
-      const linkPath = a.getAttribute('href') || a.dataset.page;
-      if (!linkPath) return false; // skip elements with no href or data-page
-      // Strip folder from nav link href as well
-      const linkFilename = linkPath.split('/').pop();
-      return linkFilename === path;
+  // ─── Nav link clicks ──────────────────────────────────────────────────────
+  navLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateTo(link.dataset.page);
+
+      // Close sidebar on mobile when navigating
+      if (sidebar.classList.contains('is-open')) {
+        sidebar.classList.remove('is-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        setContentWidth();
+      }
     });
-
-    if (matchedLink) {
-      matchedLink.classList.add('is-active');
-    }
   });
 
-  // Also show loader on iframe navigation (e.g., internal links)
-  if (mainframe) {
-    mainframe.addEventListener('loadstart', showIframeLoader);
-  }
+  // ─── Browser back / forward ───────────────────────────────────────────────
+  window.addEventListener('popstate', loadFromUrl);
 
-  // Mobile menu
+  // ─── Resize elements ──────────────────────────────────────────────────────
+  window.addEventListener('resize', setContentWidth);
+
+  // ─── Mobile menu toggle ───────────────────────────────────────────────────
   if (menuToggle && sidebar) {
     menuToggle.addEventListener('click', () => {
       const isOpen = sidebar.classList.toggle('is-open');
       menuToggle.setAttribute('aria-expanded', String(isOpen));
-    });
-
-    // Close sidebar when a nav link is clicked (on mobile)
-    const navLinks = sidebar.querySelectorAll('a');
-
-    navLinks.forEach((link) => {
-      link.addEventListener('click', () => {
-        // Only close if sidebar is open (mobile view)
-        if (sidebar.classList.contains('is-open')) {
-          sidebar.classList.remove('is-open');
-          menuToggle.setAttribute('aria-expanded', 'false');
-        }
-      });
+      setContentWidth();
     });
   }
 
-  // Initial loader brief hint
-  showIframeLoader();
+  // ─── Boot ────────────────────────────────────────────────────────────────
+  setContentWidth();
+  loadFromUrl();
 })();

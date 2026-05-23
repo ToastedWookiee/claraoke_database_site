@@ -57,14 +57,14 @@ $pdo = null;
 <head>
     <meta charset="utf-8" />
     <title>Video Player</title>
-    <link rel="stylesheet" href="../assets/css/style.css" type="text/css" />
-    <link href="../assets/css/video-js.css" rel="stylesheet">
-    <script src="../assets/js/video.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css" type="text/css" />
+    <link href="assets/css/video-js.css" rel="stylesheet">
+    <script src="assets/js/video.min.js"></script>
 </head>
 
-<body style="padding: 1.25rem">
-    <div id="video-container">
-        <div class="video-item">
+<body>
+    <div id="player-wrap">
+        <div id="player-header" class="player-header">
             <h3 class="video-title">
                 <?php
                 if (!$track) {
@@ -75,7 +75,7 @@ $pdo = null;
                 ?>
             </h3>
             <div class="video-body">
-                <div class="video-thumb"><img src="../assets/images/video_thumbnails/<?= htmlspecialchars($video_id) ?>.jpg" alt="Video Thumbnail" width="200px" height="113px" title="<?= $video_info['TITLE'] ?>" /></div>
+                <div class="video-thumb"><img src="assets/images/video_thumbnails/<?= htmlspecialchars($video_id) ?>.jpg" alt="Video Thumbnail" width="200px" height="113px" title="<?= $video_info['TITLE'] ?>" /></div>
                 <div class="video-info">
                     <p>
                         <?php if (!$track): ?>
@@ -83,9 +83,8 @@ $pdo = null;
                             <strong># of Songs:</strong> <?= $karaoke_info['NUM'] ?><br />
                             <strong>Video Info:</strong>
                             <a
-                                href="../pages/video.html?videoID=<?= htmlspecialchars($video_id) ?>"
-                                class="video-link"
-                                target="_self">Link</a><br />
+                                onclick="navigateTo('video', {v: '<?= htmlspecialchars($video_id) ?>'})"
+                                class="video-link">Link</a><br />
                             <strong>Description:</strong>
                             <a id="desc-link" href="#" class="desc-link" target="_self">View Description</a>
                         <?php else: ?>
@@ -93,17 +92,16 @@ $pdo = null;
                             <strong>Date Aired:</strong> <?= $date_aired ?><br />
                             <strong>Video Info:</strong>
                             <a
-                                href="../pages/video.html?videoID=<?= htmlspecialchars($video_id) ?>"
-                                class="video-link"
-                                target="_self">Link</a><br />
+                                onclick="navigateTo('video', {v: '<?= htmlspecialchars($video_id) ?>'})"
+                                class="video-link">Link</a><br />
                             <strong>Description:</strong>
-                            <a id="desc-link" href="#" class="desc-link" target="_self">View Description</a>
+                            <a id="desc-link" href="#" class="desc-link">View Description</a>
                         <?php endif; ?>
                     </p>
                 </div>
             </div>
         </div>
-        <div class="table-container player-container" style="max-height: calc(100vh - 275px)">
+        <div class="player-container">
             <video id="player" class="video-js vjs-default-skin" controls preload="auto">
             </video>
         </div>
@@ -120,9 +118,25 @@ $pdo = null;
     </div>
 
     <script>
-        const descLink = document.getElementById('desc-link');
+        (function() {
+            const descLink = document.getElementById('desc-link');
 
-        window.addEventListener('load', () => {
+            function remToPx(rem) {
+                // Get the actual font size of the root element (html)
+                const rootFontSize = parseFloat(
+                    getComputedStyle(document.documentElement).fontSize
+                );
+                return rem * rootFontSize;
+            }
+
+            function setInitialPlayerSize() {
+                const container = document.querySelector('.player-container');
+                const containerWidth = container.clientWidth;
+                const calculatedHeight = containerWidth * (9 / 16);
+                container.style.height = `${calculatedHeight}px`;
+            }
+            setInitialPlayerSize();
+
             const player = videojs('player', {
                 fill: true,
             });
@@ -144,11 +158,13 @@ $pdo = null;
                     const videoHeight = player.videoHeight();
                     const aspectRatio = videoHeight / videoWidth;
                     const container = document.querySelector('.player-container');
+                    const playerHeader = document.getElementById('player-header').offsetHeight;
+                    const mainWrap = document.getElementById('main-wrap').offsetHeight;
 
                     const updateSize = () => {
                         const containerWidth = container.clientWidth;
                         const calculatedHeight = containerWidth * aspectRatio;
-                        const maxHeight = window.innerHeight - 275;
+                        const maxHeight = window.innerHeight - playerHeader - (2 * remToPx(1.5)) - 293 - 42 - 15;
                         container.style.height = `${Math.min(calculatedHeight, maxHeight)}px`;
                     };
 
@@ -157,28 +173,28 @@ $pdo = null;
                     updateSize();
                 });
             });
-        });
 
-        descLink.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const res = await fetch(`../php/description.php?videoID=<?= htmlspecialchars($video_id) ?>`);
-            const data = await res.json();
-            document.getElementById('description-body').textContent =
-                data.description || 'No description available.';
-            document.getElementById('description-modal').classList.add('is-visible');
-        });
+            descLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const res = await fetch(`php/description.php?videoID=<?= htmlspecialchars($video_id) ?>`);
+                const data = await res.json();
+                document.getElementById('description-body').textContent =
+                    data.description || 'No description available.';
+                document.getElementById('description-modal').classList.add('is-visible');
+            });
 
-        // Close modal
-        document
-            .getElementById('description-close')
-            .addEventListener('click', () => {
-                document.getElementById('description-modal').classList.remove('is-visible');
-            });
-        document
-            .getElementById('description-overlay')
-            .addEventListener('click', () => {
-                document.getElementById('description-modal').classList.remove('is-visible');
-            });
+            // Close modal
+            document
+                .getElementById('description-close')
+                .addEventListener('click', () => {
+                    document.getElementById('description-modal').classList.remove('is-visible');
+                });
+            document
+                .getElementById('description-overlay')
+                .addEventListener('click', () => {
+                    document.getElementById('description-modal').classList.remove('is-visible');
+                });
+        })();
     </script>
 </body>
 
