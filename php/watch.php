@@ -1,7 +1,6 @@
 <?php
 $video_id = $_GET['v'] ?? null;
 $start_time = (int)($_GET['t'] ?? 0);
-$track = $_GET['track'] ?? null;
 
 if (!$video_id) {
     header('Location: /');
@@ -27,11 +26,15 @@ try {
     $karaoke_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Last get the song information from the songs table
-    $songs = [];
-    $sql_query = "SELECT * FROM songs WHERE VIDEOID = :videoid AND TRACK = :track ORDER BY TRACK ASC";
+    $sql_query = "SELECT * FROM songs WHERE VIDEOID = :videoid AND START_SECONDS = :start_time";
     $stmt = $pdo->prepare($sql_query);
-    $stmt->execute(['videoid' => $video_id, 'track' => $track]);
+    $stmt->execute(['videoid' => $video_id, 'start_time' => $start_time]);
     $song_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($song_info) {
+        $track = true;
+    } else {
+        $track = false;
+    }
 
     // Format our date to YYYY-MM-DD
     $date_aired = 'Unknown';

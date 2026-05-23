@@ -63,7 +63,6 @@ if ($query !== '') {
         s.ARTIST AS artist,
         s.STARTTIME AS time,
         s.START_SECONDS AS start_seconds,
-        s.TRACK AS track,
         v.TITLE AS video,
         v.VIDEOID AS videoid,
         v.TIME AS date
@@ -100,7 +99,6 @@ if ($query !== '') {
         'videoid' => $row['videoid'],
         'date' => $date,
         'start_seconds' => $row['start_seconds'],
-        'track' => $row['track'],
       ];
     }
   } catch (PDOException $e) {
