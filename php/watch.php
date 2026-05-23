@@ -85,7 +85,7 @@ $pdo = null;
                             <a
                                 href="../pages/video.html?videoID=<?= htmlspecialchars($video_id) ?>"
                                 class="video-link"
-                                target="_self">Linkt</a><br />
+                                target="_self">Link</a><br />
                             <strong>Description:</strong>
                             <a id="desc-link" href="#" class="desc-link" target="_self">View Description</a>
                         <?php else: ?>
