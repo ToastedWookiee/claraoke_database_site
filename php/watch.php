@@ -124,6 +124,9 @@ $pdo = null;
         (function() {
             const descLink = document.getElementById('desc-link');
 
+            const STORAGE_KEY_VOLUME = 'player-volume';
+            const STORAGE_KEY_MUTED = 'player-muted';
+
             function remToPx(rem) {
                 // Get the actual font size of the root element (html)
                 const rootFontSize = parseFloat(
@@ -151,6 +154,34 @@ $pdo = null;
             });
 
             player.ready(() => {
+                // Restore saved volume
+                const savedVolume = localStorage.getItem(STORAGE_KEY_VOLUME);
+                const savedMuted = localStorage.getItem(STORAGE_KEY_MUTED);
+
+                if (savedVolume !== null) {
+                    player.volume(parseFloat(savedVolume));
+                } else {
+                    // Only apply default if user has never chosen
+                    player.volume(0.5);
+                }
+
+                if (savedMuted !== null) {
+                    player.muted(savedMuted === 'true');
+                }
+
+                // Save whenever volume changes
+                player.on('volumechange', () => {
+                    localStorage.setItem(
+                        STORAGE_KEY_VOLUME,
+                        player.volume()
+                    );
+
+                    localStorage.setItem(
+                        STORAGE_KEY_MUTED,
+                        player.muted()
+                    );
+                });
+
                 player.one('loadedmetadata', () => {
                     if (startTime > 0) {
                         player.currentTime(startTime);
