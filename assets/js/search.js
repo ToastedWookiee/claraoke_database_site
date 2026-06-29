@@ -212,9 +212,12 @@
           header.classList.toggle('sorted-asc', !isAsc);
           header.classList.toggle('sorted-desc', isAsc);
 
-          rows.forEach((row) => tbody.appendChild(row));
-          rows.forEach((row, i) => {
-            row.style.backgroundColor = i % 2 === 0 ? '#0375d8' : '#1086ef';
+          rows.forEach((row) => {
+            const expandable = row.nextElementSibling;
+            tbody.appendChild(row);
+            if (expandable && expandable.classList.contains('expandable-row')) {
+              tbody.appendChild(expandable);
+            }
           });
         });
       }
