@@ -4,10 +4,10 @@
 // such as grabbing from Docker secrets or environment variables
 
 // Enter values or how to get said values, ex: ENVVARs or Docker secrets
-$db_host = 'INSERT YOUR DB HOST HERE';
-$db_name = 'INSERT YOUR DB NAME HERE';
-$db_user = 'INSERT YOUR DB USER HERE';
-$db_pass = 'INSERT YOUR DB PASSWORD HERE';
+$db_host = '192.168.10.78';
+$db_name = 'claraoke';
+$db_user = 'claraoke_user';
+$db_pass = 'Gk-pibJFk3d(alYc';
 
 $dsn = "mysql:host=$db_host;dbname=$db_name;charset=utf8mb4";
 

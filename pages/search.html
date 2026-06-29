@@ -29,11 +29,13 @@
             hasSearched = false;
 
             // Reset table to default message
-            resultsBody.innerHTML = '<tr><td colspan=&quot;4&quot;>Enter a query to begin.</td></tr>';
+            resultsBody.innerHTML =
+              '<tr><td colspan=&quot;4&quot;>Enter a query to begin.</td></tr>';
 
             // Clear stats
             resultsStats.innerHTML = '';
-          ">
+          "
+        >
           Clear
         </button>
       </form>
@@ -44,11 +46,13 @@
       <div
         class="table-container"
         id="resultsContainer"
-        style="max-height: calc(100vh - 547px)">
+        style="max-height: calc(100vh - 547px)"
+      >
         <table
           class="table table--search"
           aria-describedby="progress"
-          id="resultsTable">
+          id="resultsTable"
+        >
           <thead>
             <tr>
               <th data-type="string" data-sortable="true" class="col-song">
@@ -60,13 +64,15 @@
               <th
                 data-type="date"
                 class="col-date sorted-desc"
-                style="text-align: center">
+                style="text-align: center"
+              >
                 Date
               </th>
               <th
                 data-type="string"
                 class="col-link"
-                style="text-align: center">
+                style="text-align: center"
+              >
                 Link
               </th>
             </tr>
