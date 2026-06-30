@@ -13,30 +13,47 @@
           <div id="video-thumbnail" class="video-thumb"></div>
           <div class="video-info">
             <div class="video-info-stats">
-              <div><strong>Date Aired:</strong> <span id="video-date"></span></div>
-              <div><strong># of Songs:</strong> <span id="video-songs-count"></span></div>
+              <div>
+                <strong>Date Aired:</strong> <span id="video-date"></span>
+              </div>
+              <div>
+                <strong># of Songs:</strong>
+                <span id="video-songs-count"></span>
+              </div>
             </div>
             <div class="video-info-actions">
-              <button id="video-link-btn" class="btn btn--outline">Watch Video</button>
-              <button id="desc-link-btn" class="btn btn--outline">View Description</button>
+              <div>
+                <button id="desc-link-btn" class="btn btn--outline">
+                  View Description
+                </button>
+              </div>
+              <div>
+                <button id="video-link-btn" class="btn btn--outline">
+                  Watch Video
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="table-container" style="max-height: calc(100vh - 576px)">
-        <div class="song-list">
-          <table class="table table--search" id="songTable">
-            <thead>
-              <tr>
-                <th scope="col" class="col-song" data-type="string">Song / Artist</th>
-                <th scope="col" class="col-link" style="text-align: center">
-                  Link to Watch
-                </th>
-              </tr>
-            </thead>
-            <tbody id="song-list-body"></tbody>
-          </table>
-        </div>
+      <div
+        class="table-container"
+        id="songListContainer"
+        style="max-height: calc(100dvh - 576px)"
+      >
+        <table class="table table--search" id="songTable">
+          <thead>
+            <tr>
+              <th scope="col" class="col-song" data-type="string">
+                Song / Artist
+              </th>
+              <th scope="col" class="col-link" style="text-align: center">
+                Link
+              </th>
+            </tr>
+          </thead>
+          <tbody id="song-list-body"></tbody>
+        </table>
       </div>
     </div>
     <script src="assets/js/video.js"></script>

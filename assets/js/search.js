@@ -1,15 +1,15 @@
 (function () {
-  const form = document.getElementById('searchForm');
-  const input = document.getElementById('searchQuery');
-  const resultsBody = document.getElementById('resultsBody');
-  const progress = document.getElementById('progress');
-  const resultsStats = document.getElementById('resultsStats');
-  const table = document.getElementById('resultsTable');
-  const tbody = document.getElementById('resultsBody');
+  const form = document.getElementById("searchForm");
+  const input = document.getElementById("searchQuery");
+  const resultsBody = document.getElementById("resultsBody");
+  const progress = document.getElementById("progress");
+  const resultsStats = document.getElementById("resultsStats");
+  const table = document.getElementById("resultsTable");
+  const tbody = document.getElementById("resultsBody");
 
   // ─── Table resize ─────────────────────────────────────────────────────────
   function resizeTable() {
-    const container = document.getElementById('resultsContainer');
+    const container = document.getElementById("resultsContainer");
     if (!container || !table) return;
 
     const containerWidth = Math.min(container.offsetWidth, 1000);
@@ -19,11 +19,11 @@
     const minCol1Width = 250;
     const maxCol1Width = 500;
 
-    const ctx = document.createElement('canvas').getContext('2d');
+    const ctx = document.createElement("canvas").getContext("2d");
     ctx.font = getComputedStyle(table).font;
 
     let maxContentWidth = 0;
-    table.querySelectorAll('tr').forEach((row) => {
+    table.querySelectorAll("tr").forEach((row) => {
       const cell = row.children[0];
       if (!cell) return;
       const text = cell.innerText || cell.textContent;
@@ -33,7 +33,7 @@
 
     let col1Width = Math.min(
       Math.max(maxContentWidth, minCol1Width),
-      maxCol1Width
+      maxCol1Width,
     );
     let remaining = containerWidth - col3Width - col4Width;
     let col2Width = remaining - col1Width;
@@ -43,30 +43,30 @@
     }
     col2Width = Math.max(col2Width, 0);
 
-    table.querySelectorAll('tr').forEach((row) => {
+    table.querySelectorAll("tr").forEach((row) => {
       const cells = row.children;
       if (cells.length < 4) return;
-      cells[0].style.width = col1Width + 'px';
-      cells[1].style.width = col2Width + 'px';
-      cells[2].style.width = col3Width + 'px';
-      cells[3].style.width = col4Width + 'px';
+      cells[0].style.width = col1Width + "px";
+      cells[1].style.width = col2Width + "px";
+      cells[2].style.width = col3Width + "px";
+      cells[3].style.width = col4Width + "px";
     });
   }
 
   // ─── Loading state ────────────────────────────────────────────────────────
   function setLoading(on) {
-    progress.classList.toggle('is-active', on);
+    progress.classList.toggle("is-active", on);
   }
 
   // ─── Render rows ──────────────────────────────────────────────────────────
   let hasSearched = false;
 
   function renderRows(items) {
-    resultsBody.innerHTML = '';
+    resultsBody.innerHTML = "";
 
     if (!items || !items.length) {
       resultsBody.innerHTML = `<tr><td colspan="4">${
-        hasSearched ? 'No results' : 'Enter a query to begin.'
+        hasSearched ? "No results" : "Enter a query to begin."
       }</td></tr>`;
       return;
     }
@@ -74,8 +74,8 @@
     hasSearched = true;
 
     for (const item of items) {
-      const mainRow = document.createElement('tr');
-      mainRow.className = 'main-row';
+      const mainRow = document.createElement("tr");
+      mainRow.className = "main-row";
       mainRow.innerHTML = `
         <td class="col-song"><span class="truncate" title="${item.song} / ${item.artist}">${item.song} / ${item.artist}</span></td>
         <td class="col-video"><a class="full-link" onclick="navigateTo('video', {v: '${item.videoid}'})"><span class="truncate" title="${item.video}">${item.video}</span></a></td>
@@ -83,16 +83,23 @@
         <td class="col-link"><a class="full-link" onclick="navigateTo('watch', {v: '${item.videoid}', t: '${item.start_seconds}'})">Watch</a></td>
       `;
 
-      const expandableRow = document.createElement('tr');
-      expandableRow.className = 'expandable-row';
+      const expandableRow = document.createElement("tr");
+      expandableRow.className = "expandable-row";
       expandableRow.innerHTML = `
         <td colspan="4">
-          <div><strong>Stream:</strong> <a class="link" onclick="navigateTo('video', {v: '${item.videoid}'})">${item.video}</a></div>
+          <div><strong>Stream:</strong> ${item.video}</div>
           <div><strong>Date:</strong> ${item.date}</div>
           <div class="expandable-actions">
-            <button class="btn btn--outline" onclick="navigateTo('watch', {v: '${item.videoid}', t: '${item.start_seconds}'})">
-              Watch Song
-            </button>
+            <div>
+              <button class="btn btn--outline" onclick="navigateTo('video', {v: '${item.videoid}'})">
+                Stream Info
+              </button>
+            </div>
+            <div>
+              <button class="btn btn--outline" onclick="navigateTo('watch', {v: '${item.videoid}', t: '${item.start_seconds}'})">
+                Watch Song
+              </button>
+            </div
           </div>
         </td>
       `;
@@ -100,8 +107,8 @@
       resultsBody.appendChild(mainRow);
       resultsBody.appendChild(expandableRow);
 
-      mainRow.addEventListener('click', () => {
-        expandableRow.classList.toggle('is-visible');
+      mainRow.addEventListener("click", () => {
+        expandableRow.classList.toggle("is-visible");
       });
     }
   }
@@ -109,13 +116,13 @@
   // ─── Result stats ─────────────────────────────────────────────────────────
   function displayStats(data) {
     if (!data || !data.items || data.items.length === 0) {
-      resultsStats.innerHTML = '';
+      resultsStats.innerHTML = "";
       return;
     }
     const total = data.count || 0;
-    const query = data.query || '';
+    const query = data.query || "";
     resultsStats.innerHTML = `<strong>${total}</strong> result${
-      total !== 1 ? 's' : ''
+      total !== 1 ? "s" : ""
     } for "<em>${query}</em>"`;
   }
 
@@ -126,21 +133,21 @@
     setLoading(true);
 
     try {
-      const res = await fetch('php/search.php', {
+      const res = await fetch("php/search.php", {
         // root-relative
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ q }),
       });
-      if (!res.ok) throw new Error('Network error');
+      if (!res.ok) throw new Error("Network error");
       const data = await res.json();
       displayStats(data || []);
       renderRows(data.items || []);
 
-      if (window.matchMedia('(min-width: 769px)').matches) {
+      if (window.matchMedia("(min-width: 769px)").matches) {
         resizeTable();
       } else {
-        document.querySelectorAll('.col-song').forEach((col) => {
+        document.querySelectorAll(".col-song").forEach((col) => {
           col.colSpan = 4;
         });
       }
@@ -155,15 +162,15 @@
 
   // ─── Form submit ──────────────────────────────────────────────────────────
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
       const q = input.value.trim();
       // Update the URL so it's shareable
       const qs = new URLSearchParams({ q }).toString();
       window.history.pushState(
-        { page: 'search', params: { q } },
-        '',
-        `/search?${qs}`
+        { page: "search", params: { q } },
+        "",
+        `/search?${qs}`,
       );
       doSearch(q);
     });
@@ -171,34 +178,34 @@
 
   // ─── Sorting ──────────────────────────────────────────────────────────────
   if (table) {
-    const headers = table.querySelectorAll('thead th');
+    const headers = table.querySelectorAll("thead th");
 
     headers.forEach((header, index) => {
-      const type = header.getAttribute('data-type');
-      const sortable = header.getAttribute('data-sortable');
+      const type = header.getAttribute("data-type");
+      const sortable = header.getAttribute("data-sortable");
 
-      if (type === 'date' || (type === 'string' && sortable === 'true')) {
-        header.style.cursor = 'pointer';
+      if (type === "date" || (type === "string" && sortable === "true")) {
+        header.style.cursor = "pointer";
 
-        header.addEventListener('click', () => {
-          const rows = Array.from(tbody.querySelectorAll('.main-row'));
-          const isAsc = header.classList.contains('sorted-asc');
+        header.addEventListener("click", () => {
+          const rows = Array.from(tbody.querySelectorAll(".main-row"));
+          const isAsc = header.classList.contains("sorted-asc");
 
           rows.sort((a, b) => {
             let aText = a.children[index].textContent.trim();
             let bText = b.children[index].textContent.trim();
 
-            if (type === 'number') {
+            if (type === "number") {
               return isAsc
                 ? (parseFloat(bText) || 0) - (parseFloat(aText) || 0)
                 : (parseFloat(aText) || 0) - (parseFloat(bText) || 0);
             }
-            if (type === 'date') {
+            if (type === "date") {
               return isAsc
                 ? new Date(bText) - new Date(aText)
                 : new Date(aText) - new Date(bText);
             }
-            if (type === 'string') {
+            if (type === "string") {
               return isAsc
                 ? bText.localeCompare(aText)
                 : aText.localeCompare(bText);
@@ -207,15 +214,15 @@
           });
 
           headers.forEach((h) =>
-            h.classList.remove('sorted-asc', 'sorted-desc')
+            h.classList.remove("sorted-asc", "sorted-desc"),
           );
-          header.classList.toggle('sorted-asc', !isAsc);
-          header.classList.toggle('sorted-desc', isAsc);
+          header.classList.toggle("sorted-asc", !isAsc);
+          header.classList.toggle("sorted-desc", isAsc);
 
           rows.forEach((row) => {
             const expandable = row.nextElementSibling;
             tbody.appendChild(row);
-            if (expandable && expandable.classList.contains('expandable-row')) {
+            if (expandable && expandable.classList.contains("expandable-row")) {
               tbody.appendChild(expandable);
             }
           });
@@ -225,7 +232,7 @@
   }
 
   // ─── Boot: run search if ?q= is in the URL ────────────────────────────────
-  const rawQuery = new URLSearchParams(window.location.search).get('q');
+  const rawQuery = new URLSearchParams(window.location.search).get("q");
   if (rawQuery) {
     if (input) input.value = rawQuery; // URLSearchParams.get() already decodes %20 → space
     doSearch(rawQuery);

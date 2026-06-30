@@ -5,70 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Searchable database of karaoke songs sung by Kaminari Clara of PhaseConnect" />
+      content="Searchable database of karaoke songs sung by Kaminari Clara of PhaseConnect"
+    />
     <title>Claraoke Database</title>
     <link rel="stylesheet" href="assets/css/style.css" type="text/css" />
     <link
       rel="apple-touch-icon"
       sizes="57x57"
-      href="assets/images/apple-icon-57x57.png" />
+      href="assets/images/apple-icon-57x57.png"
+    />
     <link
       rel="apple-touch-icon"
       sizes="60x60"
-      href="assets/images/apple-icon-60x60.png" />
+      href="assets/images/apple-icon-60x60.png"
+    />
     <link
       rel="apple-touch-icon"
       sizes="72x72"
-      href="assets/images/apple-icon-72x72.png" />
+      href="assets/images/apple-icon-72x72.png"
+    />
     <link
       rel="apple-touch-icon"
       sizes="76x76"
-      href="assets/images/apple-icon-76x76.png" />
+      href="assets/images/apple-icon-76x76.png"
+    />
     <link
       rel="apple-touch-icon"
       sizes="114x114"
-      href="assets/images/apple-icon-114x114.png" />
+      href="assets/images/apple-icon-114x114.png"
+    />
     <link
       rel="apple-touch-icon"
       sizes="120x120"
-      href="assets/images/apple-icon-120x120.png" />
+      href="assets/images/apple-icon-120x120.png"
+    />
     <link
       rel="apple-touch-icon"
       sizes="144x144"
-      href="assets/images/apple-icon-144x144.png" />
+      href="assets/images/apple-icon-144x144.png"
+    />
     <link
       rel="apple-touch-icon"
       sizes="152x152"
-      href="assets/images/apple-icon-152x152.png" />
+      href="assets/images/apple-icon-152x152.png"
+    />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="assets/images/apple-icon-180x180.png" />
+      href="assets/images/apple-icon-180x180.png"
+    />
     <link
       rel="icon"
       type="image/png"
       sizes="192x192"
-      href="assets/images/android-icon-192x192.png" />
+      href="assets/images/android-icon-192x192.png"
+    />
     <link
       rel="icon"
       type="image/png"
       sizes="144x144"
-      href="assets/images/android-icon-144x144.png" />
+      href="assets/images/android-icon-144x144.png"
+    />
     <link
       rel="icon"
       type="image/png"
       sizes="32x32"
-      href="assets/images/favicon-32x32.png" />
+      href="assets/images/favicon-32x32.png"
+    />
     <link
       rel="icon"
       type="image/png"
       sizes="96x96"
-      href="assets/images/favicon-96x96.png" />
+      href="assets/images/favicon-96x96.png"
+    />
     <link
       rel="icon"
       type="image/png"
       sizes="16x16"
-      href="assets/images/favicon-16x16.png" />
+      href="assets/images/favicon-16x16.png"
+    />
     <link rel="preconnect" href="https://cloudflareinsights.com" />
     <link rel="preconnect" href="https://claraoke-db.com" />
     <script defer src="assets/js/app.js"></script>
@@ -80,7 +95,8 @@
         class="menu-toggle"
         aria-label="Toggle navigation"
         aria-controls="sidebar"
-        aria-expanded="false">
+        aria-expanded="false"
+      >
         ☰
       </button>
       <div class="brand">
@@ -89,7 +105,8 @@
           alt=""
           class="brand__logo"
           width="44px"
-          height="44px" />
+          height="44px"
+        />
         <div class="brand__text">
           <h1 class="brand__title">Claraoke Database</h1>
           <p class="brand__subtitle">
@@ -127,44 +144,44 @@
           <script defer>
             async function fetchUpdateTime() {
               try {
-                const res = await fetch('php/db_time.php');
+                const res = await fetch("php/db_time.php");
                 const data = await res.json();
 
                 // Parse the UTC time string
-                const utcString = data.last_update + ' UTC';
+                const utcString = data.last_update + " UTC";
                 const date = new Date(utcString);
 
                 // Display UTC
-                document.getElementById('utc-time').textContent = date
+                document.getElementById("utc-time").textContent = date
                   .toISOString()
-                  .replace('T', ' ')
-                  .replace(/\..+/, '');
+                  .replace("T", " ")
+                  .replace(/\..+/, "");
 
                 // Display Local (YYYY-MM-DD HH:mm:ss in user's local timezone)
                 const localYear = date.getFullYear();
-                const localMonth = String(date.getMonth() + 1).padStart(2, '0');
-                const localDay = String(date.getDate()).padStart(2, '0');
+                const localMonth = String(date.getMonth() + 1).padStart(2, "0");
+                const localDay = String(date.getDate()).padStart(2, "0");
                 let localHours = date.getHours();
-                const localMinutes = String(date.getMinutes()).padStart(2, '0');
-                const localSeconds = String(date.getSeconds()).padStart(2, '0');
+                const localMinutes = String(date.getMinutes()).padStart(2, "0");
+                const localSeconds = String(date.getSeconds()).padStart(2, "0");
 
                 // AM/PM conversion
-                const ampm = localHours >= 12 ? 'PM' : 'AM';
+                const ampm = localHours >= 12 ? "PM" : "AM";
                 localHours = localHours % 12;
                 if (localHours === 0) localHours = 12; // midnight or noon
-                localHours = String(localHours).padStart(2, '0');
+                localHours = String(localHours).padStart(2, "0");
 
-                document.getElementById('local-time').textContent =
+                document.getElementById("local-time").textContent =
                   `${localYear}-${localMonth}-${localDay} ${localHours}:${localMinutes}:${localSeconds}${ampm}`;
               } catch (err) {
-                console.error('Error fetching update time:', err);
+                console.error("Error fetching update time:", err);
               }
             }
 
             fetchUpdateTime();
           </script>
 
-          <small>Site v1.4.0</small>
+          <small>Site v1.5.0</small>
         </div>
       </aside>
 
@@ -172,28 +189,28 @@
       <main class="main">
         <div id="main-wrap" class="main-wrap">
           <div id="main-content" class="main-content"></div>
+
+          <!-- Footer -->
+          <footer class="site-footer" role="contentinfo">
+            <div class="footer__inner">
+              <p>
+                &copy; <span id="year"></span> Claraoke Database. All rights
+                reserved.<br />
+                <br />
+                This website is a fan-created, non-commercial resource for
+                informational purposes only.<br />
+                All songs, lyrics, and musical works listed here are the
+                property of their respective copyright holders.<br />
+                Streamer performances, likeness, and related content are © Phase
+                Connect LTD.<br />
+                <br />
+                If you are a rights holder and wish to request removal of any
+                content, please contact us at: contact@claraoke-db.com
+              </p>
+            </div>
+          </footer>
         </div>
       </main>
     </div>
-
-    <!-- Footer -->
-    <footer class="site-footer" role="contentinfo">
-      <div class="footer__inner">
-        <p>
-          &copy; <span id="year"></span> Claraoke Database. All rights
-          reserved.<br />
-          <br />
-          This website is a fan-created, non-commercial resource for
-          informational purposes only.<br />
-          All songs, lyrics, and musical works listed here are the property of
-          their respective copyright holders.<br />
-          Streamer performances, likeness, and related content are © Phase
-          Connect LTD.<br />
-          <br />
-          If you are a rights holder and wish to request removal of any content,
-          please contact us at: contact@claraoke-db.com
-        </p>
-      </div>
-    </footer>
   </body>
 </html>

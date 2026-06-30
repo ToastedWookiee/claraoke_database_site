@@ -78,26 +78,47 @@ $pdo = null;
                 ?>
             </h3>
             <div class="video-body">
-                <div class="video-thumb"><img src="assets/images/video_thumbnails/<?= htmlspecialchars($video_id) ?>.jpg" alt="Video Thumbnail" width="200px" height="113px" title="<?= $video_info['TITLE'] ?>" /></div>
+              <div class="video-thumb"><img src="assets/images/video_thumbnails_l/<?= htmlspecialchars($video_id) ?>.jpg" alt="Video Thumbnail" width="200px" height="113px" title="<?= $video_info['TITLE'] ?>" /></div>
                 <div class="video-info">
-                    <p>
-                        <?php if (!$track): ?>
-                            <span><strong>Date Aired:</strong> <?= $date_aired ?></span>
-                            <span><strong># of Songs:</strong> <?= $karaoke_info['NUM'] ?></span>
-                            <a
-                                onclick="navigateTo('video', {v: '<?= htmlspecialchars($video_id) ?>'})"
-                                class="btn btn--outline video-link">View Video Info</a>
-                            <a id="desc-link" href="#" class="btn btn--outline desc-link" target="_self">View Description</a>
-                        <?php else: ?>
-                            <span><strong>Video Title:</strong> <?= $video_info['TITLE'] ?></span>
-                            <span><strong>Date Aired:</strong> <?= $date_aired ?></span>
-                            <a
-                                onclick="navigateTo('video', {v: '<?= htmlspecialchars($video_id) ?>'})"
-                                class="btn btn--outline video-link">View Video Info</a>
-                            <a id="desc-link" href="#" class="btn btn--outline desc-link">View Description</a>
-                        <?php endif; ?>
-                    </p>
+                  <div class="video-info-stats">
+                    <?php if (!$track): ?>
+                      <div><strong>Date Aired:</strong> <?= $date_aired ?></div>
+                      <div><strong># of Songs:</strong> <?= $karaoke_info['NUM'] ?></div>
+                    </div>
+                    <div class="video-info-actions">
+                      <div>
+                        <button id="desc-link" href="#" class="btn btn--outline desc-link" target="_self">
+                          View Description
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                            onclick="navigateTo('video', {v: '<?= htmlspecialchars($video_id) ?>'})"
+                            class="btn btn--outline">
+                          View Video Info
+                        </button>
+                      </div>
+                    <?php else: ?>
+                      <div><strong>Video Title:</strong> <?= $video_info['TITLE'] ?></div>
+                      <div><strong>Date Aired:</strong> <?= $date_aired ?></div>
+                    </div>
+                    <div class="video-info-actions">
+                      <div>
+                        <button id="desc-link" href="#" class="btn btn--outline desc-link">
+                          View Description
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                            onclick="navigateTo('video', {v: '<?= htmlspecialchars($video_id) ?>'})"
+                            class="btn btn--outline">
+                          View Video Info
+                        </button>
+                      </div>
+                    <?php endif; ?>
+                  </div>
                 </div>
+              </div>
             </div>
         </div>
         <div class="player-container">
@@ -194,7 +215,17 @@ $pdo = null;
                     const updateSize = () => {
                         const containerWidth = container.clientWidth;
                         const calculatedHeight = containerWidth * aspectRatio;
-                        const maxHeight = window.innerHeight - playerHeader - (2 * remToPx(1.5)) - 293 - 42 - 15;
+
+                        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+                        let maxHeight;
+                        if (isMobile) {
+                          // On mobile, just cap to viewport height minus header so it never overflows the screen
+                          maxHeight = window.innerHeight - playerHeader - (2 * remToPx(1.5));
+                        } else {
+                          maxHeight = window.innerHeight - playerHeader - (2 * remToPx(1.5)) - 293 - 42 - 15;
+                        }
+
                         container.style.height = `${Math.min(calculatedHeight, maxHeight)}px`;
                     };
 

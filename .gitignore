@@ -10,4 +10,5 @@ dist/
 .prettierrc
 data/
 generate_stats.py
-assets/images/video_thumbnails/
+assets/images/video_thumbnails_s/
+assets/images/video_thumbnails_l/
